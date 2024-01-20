@@ -38,6 +38,6 @@ Returns:
 
 ```JSON
 {
-  auth-token: ABC...XYZ
+  session-token: abc...xyz
 }
 ```
