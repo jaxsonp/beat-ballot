@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import {useNavigate} from "react-router-dom";
+import Home from "./Home"
+
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,6 +21,7 @@ const backendURL = "http://127.0.0.1:5000";
 
 export default function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -38,16 +42,26 @@ export default function SignIn() {
         // check for valid inputs
 
         if (!empty) {
-            // TODO: send to backend to check if valid login
+            // print username/password to console
             console.log({
                 username: username,
                 password: password,
             });
-            let sessionToken = "";
+            
+            // send username/password to server
             fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
                 .then((response) => response.json())
-                .then((data) => console.log(data));
-            console.log(sessionToken);
+                // get response from server, if valid login, save session token and move to home
+                .then((data) => {
+                    console.log(data)
+                    var message = data.message;
+                    if (message === "success") {
+                        Home.updateSessionToken(data.sessionToken);
+                        Home.updateUsername(data.username);
+                        navigate("/home")
+                    }
+                }
+            );
         }
     }
 
@@ -105,7 +119,7 @@ export default function SignIn() {
                         </Button>
                         <Grid container>
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link href="/sign-up" variant="body2">
                                     {"Sign Up to BeatBallot"}
                                 </Link>
                             </Grid>
