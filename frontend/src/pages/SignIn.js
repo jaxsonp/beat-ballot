@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {useNavigate} from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,6 +19,7 @@ const backendURL = "http://127.0.0.1:5000";
 
 export default function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -57,7 +59,14 @@ export default function SignIn() {
             let sessionToken = "";
             fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
                 .then((response) => response.json())
-                .then((data) => (sessionToken = data["session-token"]));
+                .then((data) => {
+                    console.log(data)
+                    var message = data.message;
+                    if (message == "success") {
+                        sessionToken = data.sessionToken;
+                        navigate("/home")
+                    }
+                });
             console.log(sessionToken);
         }
     }
@@ -92,6 +101,7 @@ export default function SignIn() {
                             autoFocus
                         />
 <<<<<<< HEAD
+<<<<<<< HEAD
                     }
                     label="Show Password"
                 />
@@ -117,6 +127,8 @@ export default function SignIn() {
   );
 }
 =======
+=======
+>>>>>>> backend
                         <TextField
                             margin="normal"
                             required
@@ -142,7 +154,7 @@ export default function SignIn() {
                         </Button>
                         <Grid container>
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link href="/sign-up" variant="body2">
                                     {"Sign Up to BeatBallot"}
                                 </Link>
                             </Grid>
@@ -153,4 +165,7 @@ export default function SignIn() {
         </ThemeProvider>
     );
 }
+<<<<<<< HEAD
 >>>>>>> main
+=======
+>>>>>>> backend

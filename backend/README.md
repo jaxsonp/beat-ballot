@@ -38,6 +38,7 @@ Returns:
 
 ```JSON
 {
-  session-token: abc...xyz
+  "message": "success",
+  "session-token": "abc...xyz",
 }
 ```
