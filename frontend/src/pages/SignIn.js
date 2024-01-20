@@ -28,12 +28,12 @@ export default function SignIn() {
 
         // check for empty fields
 
-        if (!username) {
-            empty = true;
-        }
-        if (!password) {
-            empty = true;
-        }
+    if (!username) {
+        empty = true;
+    }
+    if (!password) {
+        empty = true;
+    }
 
         // check for valid inputs
 
@@ -46,7 +46,7 @@ export default function SignIn() {
             let sessionToken = "";
             fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
                 .then((response) => response.json())
-                .then((data) => console.log(data));
+                .then((data) => (sessionToken = data["session-token"]));
             console.log(sessionToken);
         }
     }
@@ -80,32 +80,6 @@ export default function SignIn() {
                             autoComplete="username"
                             autoFocus
                         />
-<<<<<<< HEAD
-                    }
-                    label="Show Password"
-                />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Sign Up for BeatBallot"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </Container>
-    </ThemeProvider>
-  );
-}
-=======
                         <TextField
                             margin="normal"
                             required
@@ -142,4 +116,3 @@ export default function SignIn() {
         </ThemeProvider>
     );
 }
->>>>>>> 0bddfd06e5690d4af22f2b665409af37513ef056
