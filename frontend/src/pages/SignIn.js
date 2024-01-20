@@ -41,12 +41,13 @@ export default function SignIn() {
             return;
         }
 
+
         // print username/password to console
         console.log({
             username: username,
             password: password,
         });
-        
+        // check for valid inputs
         // send username/password to server
         fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
             .then((response) => response.json())

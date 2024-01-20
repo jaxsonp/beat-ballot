@@ -69,7 +69,16 @@ function Home({ username, sessionToken }) {
                             BEATBALLOT
                         </Typography>
                         <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}></Box>
-
+                        <Typography
+                            variant="subtitle1"
+                            textAlign="right"
+                            style={{
+                                margin: "1rem",
+                                verticalAlign: "middle",
+                            }}
+                        >
+                            Logged in as {username}
+                        </Typography>
                         <Box sx={{ flexGrow: 0 }}>
                             <Tooltip title="Open settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

@@ -104,13 +104,22 @@ export default function SignUp({ setUsername, setSessionToken }) {
             Sign Up For BeatBallot
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+<<<<<<< HEAD
+          <TextField
+=======
             <TextField
+>>>>>>> backend
               margin="normal"
               required
               fullWidth
               id="username"
               label="Username"
               name="username"
+<<<<<<< HEAD
+              autoComplete="username"
+              autoFocus
+=======
+>>>>>>> backend
             />
             <TextField
               margin="normal"
@@ -122,6 +131,18 @@ export default function SignUp({ setUsername, setSessionToken }) {
               id="password"
             />
             <FormControlLabel
+<<<<<<< HEAD
+                    control={
+                        <Checkbox 
+                            value="showPassword" 
+                            color="primary" 
+                            checked={showPassword}
+                            onChange={() => setShowPassword(!showPassword)}
+                        />
+                    }
+                    label="Show Password"
+                />
+=======
               control={
                   <Checkbox 
                       value="showPassword" 
@@ -132,6 +153,7 @@ export default function SignUp({ setUsername, setSessionToken }) {
               }
               label="Show Password"
             />
+>>>>>>> backend
             <Button
               type="submit"
               fullWidth
