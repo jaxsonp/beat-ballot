@@ -19,15 +19,16 @@ import Alert from '@mui/material/Alert';
 const defaultTheme = createTheme();
 const backendURL = "http://127.0.0.1:5000";
 
-export default function SignUp() { 
+export default function SignUp({ setUsername, setSessionToken }) {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
     const [error, setError] = useState(false);
 
+
     function handleSubmit(event) {
         event.preventDefault();
-    
+
         const username = event.target.username.value;
         const password = event.target.password.value;
     
@@ -38,7 +39,7 @@ export default function SignUp() {
           setErrorMessage("Please fill out all the necessary inputs!");
           return;
         }
-    
+
         // check for valid inputs
     
         if (password.includes(" ") || username.includes(" ")) {
