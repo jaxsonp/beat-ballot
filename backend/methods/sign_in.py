@@ -1,4 +1,6 @@
 import os
+import time
+import secrets
 from flask import Response, jsonify, make_response
 import sqlite3
 
@@ -31,12 +33,15 @@ def sign_in(username: str, pass_hash: str) -> Response:
         return make_response(jsonify({ "message": "Incorrect password" }), 400)
 
     # creating session token
-    cursor.execute(f"INSERT INTO Users (Username, Password) VALUES (\"john\", \"password\");")
+    token = secrets.token_urlsafe(24)
+    timestamp = int(time.time())
+    cursor.execute(f"INSERT INTO Sessions (UserID, Token, LastUsedTimestamp) VALUES ({id}, \"{token}\", {timestamp});")
+    print(f"INSERT INTO Sessions (UserID, Token, LastUsedTimestamp) VALUES ({id}, \"{token}\", {timestamp});")
 
     connection.commit()
     connection.close()
     response_data = {
         "message": "success",
-        "token": "abcde"
+        "session-token": token,
     }
     return jsonify(response_data)
