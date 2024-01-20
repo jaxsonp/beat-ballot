@@ -116,7 +116,7 @@ export default function SignIn() {
             <Grid container>
               <Grid item>
                 <Link href="#" variant="body2">
-                  {"Sign Up to BeatBallot"}
+                  {"Sign Up for BeatBallot"}
                 </Link>
               </Grid>
             </Grid>
