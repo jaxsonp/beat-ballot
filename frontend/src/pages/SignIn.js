@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -14,17 +14,16 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Alert from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 
 const defaultTheme = createTheme();
 const backendURL = "http://127.0.0.1:5000";
 
-
-export default function SignIn() {
+export default function SignIn({ setUsername, setSessionToken }) {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState("");
     const [error, setError] = useState(false);
 
     function handleSubmit(event) {
@@ -41,7 +40,6 @@ export default function SignIn() {
             return;
         }
 
-
         // print username/password to console
         console.log({
             username: username,
@@ -53,27 +51,27 @@ export default function SignIn() {
             .then((response) => response.json())
             // get response from server, if valid login, save session token and move to home
             .then((data) => {
-                console.log(data)
+                console.log(data);
                 var message = data.message;
                 if (message === "success") {
                     // note: session token is shared from app.js
                     setError(false);
-                    setErrorMessage('');
+                    setErrorMessage("");
+                    setUsername(data.username);
+                    setSessionToken(data["session-token"]);
                     navigate("/home");
-                }
-                else {
+                } else {
                     setError(true);
                     setErrorMessage(message);
                 }
-            }
-        );
+            });
     }
 
     return (
         <ThemeProvider theme={defaultTheme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
-                {error ? <Alert severity='error'>{errorMessage}</Alert> : <></> }
+                {error ? <Alert severity="error">{errorMessage}</Alert> : <></>}
                 <Box
                     sx={{
                         marginTop: 8,
