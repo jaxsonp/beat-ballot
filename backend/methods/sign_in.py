@@ -32,8 +32,11 @@ def sign_in(username: str, pass_hash: str) -> Response:
         print("Incorrect password")
         return make_response(jsonify({ "message": "Incorrect password" }), 400)
 
+    # clearing old sessions
+    cursor.execute(f"DELETE FROM Sessions WHERE UserID=\"{id}\";")
+
     # creating session token
-    token = secrets.token_urlsafe(24)
+    token = secrets.token_urlsafe(16)
     timestamp = int(time.time())
     cursor.execute(f"INSERT INTO Sessions (UserID, Token, LastUsedTimestamp) VALUES ({id}, \"{token}\", {timestamp});")
     print(f"INSERT INTO Sessions (UserID, Token, LastUsedTimestamp) VALUES ({id}, \"{token}\", {timestamp});")
@@ -43,5 +46,6 @@ def sign_in(username: str, pass_hash: str) -> Response:
     response_data = {
         "message": "success",
         "session-token": token,
+        "username": username
     }
     return jsonify(response_data)
