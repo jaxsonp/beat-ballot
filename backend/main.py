@@ -88,18 +88,29 @@ def corsify(response: Response) -> Response:
 
 def main(port=5000) -> None:
     global connection
-    print("\n\n\n")
+    print("\n\n\nInitializing")
 
     os.environ["DB_PATH"] = DATABASE_PATH
 
+    print("Connecting to database")
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
-    cursor.execute("CREATE TABLE IF NOT EXISTS Users(UserID INTEGER PRIMARY KEY, Username TEXT, Password TEXT)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS Playlists(PlaylistID INTEGER PRIMARY KEY, PlaylistName TEXT)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist(UserPlaylistID INTEGER PRIMARY KEY, PlaylistID INTEGER, UsernameID INTEGER)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS Users (UserID INTEGER PRIMARY KEY, Username TEXT, Password TEXT)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS Playlists (PlaylistID INTEGER PRIMARY KEY, PlaylistName TEXT)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist (UserPlaylistID INTEGER PRIMARY KEY, PlaylistID INTEGER, UsernameID INTEGER)")
+    # cursor.execute("CREATE TABLE IF NOT EXISTS Sessions (SessionID INTEGER PRIMARY KEY, UserID INTEGER, )")
+
+    # TEMP fake user john
+    result = cursor.execute(f"SELECT UserID, Username, Password FROM Users where Username == \"john\";").fetchone()
+    if result == None:
+        print("Inserting fake user john")
+        cursor.execute(f"INSERT INTO Users (Username, Password) VALUES (\"john\", \"password\");")
+    print(result)
+
     connection.commit()
     connection.close()
 
+    print("Starting flask\n------------------------")
     app.run(port=port)
 
 if __name__ == "__main__":

@@ -46,7 +46,7 @@ export default function SignIn() {
             let sessionToken = "";
             fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
                 .then((response) => response.json())
-                .then((data) => (sessionToken = data["session-token"]));
+                .then((data) => console.log(data));
             console.log(sessionToken);
         }
     }
