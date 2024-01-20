@@ -1,4 +1,6 @@
 import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
+
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,19 +14,23 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-// TODO remove, this demo shouldn't need to reset the theme.
+import Alert from '@mui/material/Alert';
 
 const defaultTheme = createTheme();
+const backendURL = "http://127.0.0.1:5000";
 
 export default function SignUp() { 
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('');
+    const [error, setError] = useState(false);
 
     function handleSubmit(event) {
         event.preventDefault();
     
         const username = event.target.username.value;
         const password = event.target.password.value;
+        
         let empty = false;
     
         // check for empty fields
@@ -55,6 +61,24 @@ export default function SignUp() {
                 username: username.value,
                 password: password.value,
             });
+
+            // send username/password to server
+            fetch(backendURL + "/sign-up?username=" + username + "&password=" + password)
+                .then((response) => response.json())
+                // get response from server, if valid login, save session token and move to home
+                .then((data) => {
+                    console.log(data)
+                    var message = data.message;
+                    if (message === "success") {
+                        // note: session token is shared from app.js
+                        navigate("/home")
+                    }
+                    else {
+                      setError(true);
+                      setErrorMessage(data.message);
+                    }
+                }
+            );
         }
     }
 
@@ -62,6 +86,7 @@ export default function SignUp() {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        {error ? <Alert severity='error'>{errorMessage}</Alert> : <></> }
         <Box
           sx={{
             marginTop: 8,

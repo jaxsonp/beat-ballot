@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-//import Home from "./Home";
+import {useNavigate} from "react-router-dom";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -15,13 +14,18 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Alert from '@mui/material/Alert';
 
 const defaultTheme = createTheme();
 const backendURL = "http://127.0.0.1:5000";
 
-export default function SignIn({ setUsername, setSessionToken }) {
+
+export default function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+
+    const [errorMessage, setErrorMessage] = useState('');
+    const [error, setError] = useState(false);
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -47,23 +51,26 @@ export default function SignIn({ setUsername, setSessionToken }) {
                 username: username,
                 password: password,
             });
-
+            
             // send username/password to server
             fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
                 .then((response) => response.json())
                 // get response from server, if valid login, save session token and move to home
                 .then((data) => {
-                    console.log(data);
+                    console.log(data)
                     var message = data.message;
                     if (message === "success") {
-                        //Home.updateSessionToken(data.sessionToken);
-                        //Home.updateUsername(data.username);
-                        setUsername(data.username);
-                        console.log(data);
-                        setSessionToken(data["session-token"]);
+                        // note: session token is shared from app.js
+                        setError(false);
+                        setErrorMessage('');
                         navigate("/home");
                     }
-                });
+                    else {
+                        setError(true);
+                        setErrorMessage(message);
+                    }
+                }
+            );
         }
     }
 
@@ -71,6 +78,7 @@ export default function SignIn({ setUsername, setSessionToken }) {
         <ThemeProvider theme={defaultTheme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
+                {error ? <Alert severity='error'>{errorMessage}</Alert> : <></> }
                 <Box
                     sx={{
                         marginTop: 8,
