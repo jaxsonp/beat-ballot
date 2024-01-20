@@ -39,7 +39,18 @@ export default function SignIn({ setUsername, setSessionToken }) {
             empty = true;
         }
 
+<<<<<<< HEAD
+        
+        // TODO: send to backend to check if valid login
+        console.log({
+            username: username,
+            password: password,
+        });
+    }
+}
+=======
         // check for valid inputs
+>>>>>>> main
 
         if (!empty) {
             // print username/password to console
@@ -96,6 +107,35 @@ export default function SignIn({ setUsername, setSessionToken }) {
                             autoComplete="username"
                             autoFocus
                         />
+<<<<<<< HEAD
+<<<<<<< HEAD
+                    }
+                    label="Show Password"
+                />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign In
+            </Button>
+            <Grid container>
+              <Grid item>
+                <Link href="/sign-up" variant="body2">
+                  {"Sign Up for BeatBallot"}
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Container>
+    </ThemeProvider>
+  );
+}
+=======
+=======
+>>>>>>> backend
                         <TextField
                             margin="normal"
                             required
@@ -132,3 +172,7 @@ export default function SignIn({ setUsername, setSessionToken }) {
         </ThemeProvider>
     );
 }
+<<<<<<< HEAD
+>>>>>>> main
+=======
+>>>>>>> backend
