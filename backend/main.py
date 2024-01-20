@@ -13,13 +13,19 @@ def hello_world():
     return "<h1>Base route</h1>"
 
 from methods.create_account import create_account
-@app.route("/create-account/")
+@app.route("/create-account/", methods=['POST','GET'])
 def create_account_wrapper():
-    create_account(connection)
+    #create_account(connection)
     """cursor = connection.cursor()
     result = cursor.execute("INSERT INTO Users\nVALUES (test_user, password1);")
     connection.commit()"""
-    return flask.Response("success", mimetype='text/plain')
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        return create_account(username, password)
+    else:
+        return render_template('testing/form.html')
+    #return create_account()
 
 from methods.create_playlist import create_playlist
 @app.route("/create-playlist/")

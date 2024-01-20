@@ -1,9 +1,9 @@
 import sqlite3
+import flask
 
-def create_account() -> Flask.Response:
-    #print("creating account")
-    username = request.form.get('username')
-    password = request.form.get('password')
+def create_account() -> flask.Response:
+    #username = request.form.get('username')
+    #password = request.form.get('password')
 
     connection = sqlite3.connect(os.environ["DB_PATH"])
     cursor = connection.cursor()
@@ -13,6 +13,6 @@ def create_account() -> Flask.Response:
         connection.commit()
     else:
         connection.close()
-        return Flask.Response("Username Taken", status=400, mimetype="text/plain")
+        return flask.Response("Username Taken", status=400, mimetype="text/plain")
 
-    return Flask.Response("Account Created", status=200, mimetype="text/plain")
+    return flask.Response("Account Created", status=200, mimetype="text/plain")
