@@ -24,8 +24,29 @@ def create_account_wrapper():
 from methods.create_playlist import create_playlist
 @app.route("/create-playlist/")
 def create_playlist_wrapper():
-    create_playlist()
+    name = flask.request.args.get('name')
+    create_playlist(name)
+
+    # print all playlists
+    """connection = sqlite3.connect(os.environ["DB_PATH"])
+    cursor = connection.cursor()
+    result = cursor.execute(f"SELECT * FROM Playlists;")
+    p = result.fetchone()
+    while p != None:
+        print(p)
+        p = result.fetchone()
+    connection.commit()
+    connection.close()"""
+
     return flask.Response("success", mimetype='text/plain')
+
+from methods.add_user_to_playlist import add_user_to_playlist
+@app.route("/add-user-to-playlist/")
+def add_user_to_playlist_wrapper():
+    username = flask.request.args.get('username')
+    playlist_id = flask.request.args.get('playlist_id')
+
+    return add_user_to_playlist(username, playlist_id)
 
 
 def main(port=5000) -> None:
@@ -36,9 +57,9 @@ def main(port=5000) -> None:
 
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
-    cursor.execute("CREATE TABLE IF NOT EXISTS Users(username, password)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS Playlists(playlist_id, playlist_name)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist(user_playlist_id, playlist_id, username)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS Users(UserID INTEGER PRIMARY KEY, Username TEXT, Password TEXT)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS Playlists(PlaylistID INTEGER PRIMARY KEY, PlaylistName TEXT)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist(UserPlaylistID INTEGER PRIMARY KEY, PlaylistID INTEGER, UsernameID INTEGER)")
     connection.commit()
     connection.close()
 
