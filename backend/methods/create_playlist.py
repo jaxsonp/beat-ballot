@@ -10,14 +10,13 @@ def create_playlist(name: str) -> Response:
     connection = sqlite3.connect(os.environ["DB_PATH"])
     cursor = connection.cursor()
 
-    # verifying user
-    # user_id = cursor.execute(f"SELECT UserID FROM Sessions WHERE Token=\"{name}\";").fetchone()[0]
-
     cursor.execute(f"INSERT INTO Playlists (PlaylistName)\nVALUES (\"{name}\");")
-    #playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistName=\"{name}\";").fetchone()[0]
-    #cursor.execute(f"INSERT INTO UserPlaylist (PlaylistName)\nVALUES (\"{name}\");")
-    #print(f"success (id {playlist_id})")
-    print("success")
+
+    user_id = cursor.execute(f"SELECT UserID FROM Sessions WHERE Token=\"{name}\";").fetchone()[0]
+    playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistName=\"{name}\";").fetchone()[0]
+    cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID)\nVALUES (\"{playlist_id, user_id}\");")
+    print(f"success (id {playlist_id})")
+
     connection.commit()
     connection.close()
 

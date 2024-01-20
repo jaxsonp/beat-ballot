@@ -59,7 +59,6 @@ export default function SignIn({ setUsername, setSessionToken }) {
                         //Home.updateSessionToken(data.sessionToken);
                         //Home.updateUsername(data.username);
                         setUsername(data.username);
-                        console.log(data);
                         setSessionToken(data["session-token"]);
                         navigate("/home");
                     }

@@ -22,6 +22,6 @@ def get_playlists(session_token: str) -> Response:
     connection.commit()
     connection.close()
     return make_response(jsonify({
-        "message": "...",
+        "message": "success",
         "playlists": playlists,
     }), 200)
