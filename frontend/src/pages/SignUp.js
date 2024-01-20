@@ -77,40 +77,34 @@ export default function SignUp() {
             Sign Up For BeatBallot
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="username"
-                  label="Username"
-                  name="username"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type={showPassword ? 'text': 'password'}
-                  id="password"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                    control={
-                        <Checkbox 
-                            value="showPassword" 
-                            color="primary" 
-                            checked={showPassword}
-                            onChange={() => setShowPassword(!showPassword)}
-                        />
-                    }
-                    label="Show Password"
-                />
-              </Grid>
-            </Grid>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              name="username"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type={showPassword ? 'text': 'password'}
+              id="password"
+            />
+            <FormControlLabel
+              control={
+                  <Checkbox 
+                      value="showPassword" 
+                      color="primary" 
+                      checked={showPassword}
+                      onChange={() => setShowPassword(!showPassword)}
+                  />
+              }
+              label="Show Password"
+            />
             <Button
               type="submit"
               fullWidth
@@ -121,7 +115,7 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/sign-in" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
