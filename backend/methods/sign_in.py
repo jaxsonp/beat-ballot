@@ -39,7 +39,6 @@ def sign_in(username: str, pass_hash: str) -> Response:
     token = secrets.token_urlsafe(16)
     timestamp = int(time.time())
     cursor.execute(f"INSERT INTO Sessions (UserID, Token, LastUsedTimestamp) VALUES ({id}, \"{token}\", {timestamp});")
-    print(f"INSERT INTO Sessions (UserID, Token, LastUsedTimestamp) VALUES ({id}, \"{token}\", {timestamp});")
 
     connection.commit()
     connection.close()
