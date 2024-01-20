@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-//import Home from "./Home";
+import {useNavigate} from "react-router-dom";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -15,73 +14,66 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Alert from '@mui/material/Alert';
 
 const defaultTheme = createTheme();
 const backendURL = "http://127.0.0.1:5000";
 
-export default function SignIn({ setUsername, setSessionToken }) {
+
+export default function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+
+    const [errorMessage, setErrorMessage] = useState('');
+    const [error, setError] = useState(false);
 
     function handleSubmit(event) {
         event.preventDefault();
 
         const username = event.target.username.value;
         const password = event.target.password.value;
-        let empty = false;
 
         // check for empty fields
 
-        if (!username) {
-            empty = true;
-        }
-        if (!password) {
-            empty = true;
+        if (!username || !password) {
+            setError(true);
+            setErrorMessage("Please fill out all the necessary inputs!");
+            return;
         }
 
-<<<<<<< HEAD
-        
-        // TODO: send to backend to check if valid login
+
+        // print username/password to console
         console.log({
             username: username,
             password: password,
         });
-    }
-}
-=======
         // check for valid inputs
->>>>>>> main
-
-        if (!empty) {
-            // print username/password to console
-            console.log({
-                username: username,
-                password: password,
-            });
-
-            // send username/password to server
-            fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
-                .then((response) => response.json())
-                // get response from server, if valid login, save session token and move to home
-                .then((data) => {
-                    console.log(data);
-                    var message = data.message;
-                    if (message === "success") {
-                        //Home.updateSessionToken(data.sessionToken);
-                        //Home.updateUsername(data.username);
-                        setUsername(data.username);
-                        console.log(data);
-                        setSessionToken(data["session-token"]);
-                        navigate("/home");
-                    }
-                });
-        }
+        // send username/password to server
+        fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
+            .then((response) => response.json())
+            // get response from server, if valid login, save session token and move to home
+            .then((data) => {
+                console.log(data)
+                var message = data.message;
+                if (message === "success") {
+                    // note: session token is shared from app.js
+                    setError(false);
+                    setErrorMessage('');
+                    navigate("/home");
+                }
+                else {
+                    setError(true);
+                    setErrorMessage(message);
+                }
+            }
+        );
     }
 
     return (
         <ThemeProvider theme={defaultTheme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
+                {error ? <Alert severity='error'>{errorMessage}</Alert> : <></> }
                 <Box
                     sx={{
                         marginTop: 8,
@@ -107,35 +99,6 @@ export default function SignIn({ setUsername, setSessionToken }) {
                             autoComplete="username"
                             autoFocus
                         />
-<<<<<<< HEAD
-<<<<<<< HEAD
-                    }
-                    label="Show Password"
-                />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item>
-                <Link href="/sign-up" variant="body2">
-                  {"Sign Up for BeatBallot"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </Container>
-    </ThemeProvider>
-  );
-}
-=======
-=======
->>>>>>> backend
                         <TextField
                             margin="normal"
                             required
@@ -172,7 +135,3 @@ export default function SignIn({ setUsername, setSessionToken }) {
         </ThemeProvider>
     );
 }
-<<<<<<< HEAD
->>>>>>> main
-=======
->>>>>>> backend
