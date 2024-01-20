@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import {useNavigate} from "react-router-dom";
-import Home from "./Home"
+import { useNavigate } from "react-router-dom";
+//import Home from "./Home";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -19,7 +19,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 const defaultTheme = createTheme();
 const backendURL = "http://127.0.0.1:5000";
 
-export default function SignIn() {
+export default function SignIn({ setUsername, setSessionToken }) {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
@@ -47,21 +47,23 @@ export default function SignIn() {
                 username: username,
                 password: password,
             });
-            
+
             // send username/password to server
             fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
                 .then((response) => response.json())
                 // get response from server, if valid login, save session token and move to home
                 .then((data) => {
-                    console.log(data)
+                    console.log(data);
                     var message = data.message;
                     if (message === "success") {
-                        Home.updateSessionToken(data.sessionToken);
-                        Home.updateUsername(data.username);
-                        navigate("/home")
+                        //Home.updateSessionToken(data.sessionToken);
+                        //Home.updateUsername(data.username);
+                        setUsername(data.username);
+                        console.log(data);
+                        setSessionToken(data["session-token"]);
+                        navigate("/home");
                     }
-                }
-            );
+                });
         }
     }
 
