@@ -1,17 +1,19 @@
 
-from flask import Flask
+import flask
 
 
-app = Flask(__name__)
+app = flask.Flask(__name__)
 
 
 @app.route("/")
 def hello_world():
     return "<h1>Base route</h1>"
 
-@app.route("/vote/")
-def hello_world():
-    return "<h1>Testing!</h1>"
+from methods.create_account import create_account
+@app.route("/create-account/")
+def create_account_wrapper():
+    create_account()
+    return flask.Response("success", mimetype='text/plain')
 
 
 
