@@ -30,56 +30,57 @@ export default function SignUp() {
     
         const username = event.target.username.value;
         const password = event.target.password.value;
-        
-        let empty = false;
     
         // check for empty fields
     
-        if (!username) {
-            empty = true;
-        }
-        if (!password) {
-            empty = true;
+        if (!username || !password) {
+          setError(true);
+          setErrorMessage("Please fill out all the necessary inputs!");
+          return;
         }
     
         // check for valid inputs
     
-        if (!empty) {
-            if (password.includes(" ") || username.includes(" ")) {
-                return;
-            }
-            if (username.length < 4 || username.length > 15) {
-                return;
-            }
-            if (password.length < 2) {
-                return;
-            }
-    
-            
-            // TODO: send to backend
-            console.log({
-                username: username.value,
-                password: password.value,
-            });
-
-            // send username/password to server
-            fetch(backendURL + "/sign-up?username=" + username + "&password=" + password)
-                .then((response) => response.json())
-                // get response from server, if valid login, save session token and move to home
-                .then((data) => {
-                    console.log(data)
-                    var message = data.message;
-                    if (message === "success") {
-                        // note: session token is shared from app.js
-                        navigate("/home")
-                    }
-                    else {
-                      setError(true);
-                      setErrorMessage(data.message);
-                    }
-                }
-            );
+        if (password.includes(" ") || username.includes(" ")) {
+            setError(true);
+            setErrorMessage("Username/password cannot include spaces!");
+            return;
         }
+        if (username.length < 4 || username.length > 15) {
+            setError(true);
+            setErrorMessage("Invalid username length (4-15 characters)");
+            return;
+        }
+        if (password.length < 2) {
+            setError(true);
+            setErrorMessage("Invalid password length (4-15 characters)");
+            return;
+        }
+
+        
+        // TODO: send to backend
+        console.log({
+            username: username.value,
+            password: password.value,
+        });
+
+        // send username/password to server
+        fetch(backendURL + "/sign-up?username=" + username + "&password=" + password)
+            .then((response) => response.json())
+            // get response from server, if valid login, save session token and move to home
+            .then((data) => {
+                console.log(data)
+                var message = data.message;
+                if (message === "success") {
+                    // note: session token is shared from app.js
+                    navigate("/home")
+                }
+                else {
+                  setError(true);
+                  setErrorMessage(data.message);
+                }
+            }
+        );
     }
 
   return (

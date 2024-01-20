@@ -32,46 +32,40 @@ export default function SignIn() {
 
         const username = event.target.username.value;
         const password = event.target.password.value;
-        let empty = false;
 
         // check for empty fields
 
-        if (!username) {
-            empty = true;
-        }
-        if (!password) {
-            empty = true;
+        if (!username || !password) {
+            setError(true);
+            setErrorMessage("Please fill out all the necessary inputs!");
+            return;
         }
 
-        // check for valid inputs
-
-        if (!empty) {
-            // print username/password to console
-            console.log({
-                username: username,
-                password: password,
-            });
-            
-            // send username/password to server
-            fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
-                .then((response) => response.json())
-                // get response from server, if valid login, save session token and move to home
-                .then((data) => {
-                    console.log(data)
-                    var message = data.message;
-                    if (message === "success") {
-                        // note: session token is shared from app.js
-                        setError(false);
-                        setErrorMessage('');
-                        navigate("/home");
-                    }
-                    else {
-                        setError(true);
-                        setErrorMessage(message);
-                    }
+        // print username/password to console
+        console.log({
+            username: username,
+            password: password,
+        });
+        
+        // send username/password to server
+        fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
+            .then((response) => response.json())
+            // get response from server, if valid login, save session token and move to home
+            .then((data) => {
+                console.log(data)
+                var message = data.message;
+                if (message === "success") {
+                    // note: session token is shared from app.js
+                    setError(false);
+                    setErrorMessage('');
+                    navigate("/home");
                 }
-            );
-        }
+                else {
+                    setError(true);
+                    setErrorMessage(message);
+                }
+            }
+        );
     }
 
     return (
