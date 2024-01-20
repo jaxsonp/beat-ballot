@@ -48,6 +48,14 @@ def add_user_to_playlist_wrapper():
 
     return add_user_to_playlist(username, playlist_id)
 
+from methods.sign_in import sign_in
+@app.route("/sign-in/")
+def sign_in_wrapper():
+    username = flask.request.args.get('username')
+    pass_hash = flask.request.args.get('pass')
+
+    return sign_in(username, pass_hash)
+
 
 def main(port=5000) -> None:
     global connection

@@ -2,8 +2,6 @@
 
 ## Functions
 
-### `/sign-in`
-
 ### `/create-account`
 
 ### `/get-account-info`
@@ -26,3 +24,20 @@ Params:
 
 -   `username`: Name of the user
 -   `playlist_id`: ID of the playlist
+
+### `/sign-in`
+
+Logs in a user
+
+Params:
+
+-   `username`: Name of the user
+-   `pass`: Hashed password
+
+Returns:
+
+```JSON
+{
+  auth-token: ABC...XYZ
+}
+```
