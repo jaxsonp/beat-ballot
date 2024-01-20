@@ -2,11 +2,13 @@ import { React, useState } from "react";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
+import Playlist from "./pages/Playlist";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 export default function App() {
     const [sessionToken, setSessionToken] = useState("");
     const [username, setUsername] = useState("");
+    const [playlistID, setPlaylistID] = useState(-1);
 
     function handleSetUsername(str) {
         console.log("Changing username to " + str);
@@ -16,6 +18,11 @@ export default function App() {
     function handleSetSessionToken(str) {
         console.log("Changing session token to " + str);
         setSessionToken(str);
+    }
+
+    function handleSetPlaylistID(id) {
+        console.log("Changing playlist ID to " + id);
+        setPlaylistID(id);
     }
 
     return (
@@ -40,7 +47,14 @@ export default function App() {
                     path="/sign-up"
                     element={<SignUp setUsername={handleSetUsername} setSessionToken={handleSetSessionToken} />}
                 />
-                <Route path="/home" element={<Home username={username} sessionToken={sessionToken} />} />
+                <Route
+                    path="/playlist"
+                    element={<Playlist playlistID={playlistID} username={username} sessionToken={sessionToken} />}
+                />
+                <Route
+                    path="/home"
+                    element={<Home username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />}
+                />
             </Routes>
         </Router>
     );

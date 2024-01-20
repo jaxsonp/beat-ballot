@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -20,20 +20,10 @@ import { Button } from "@mui/material";
 const settings = ["Profile", "Logout"];
 const backendURL = "http://127.0.0.1:5000";
 
-function Home({ username, sessionToken, setPlaylist }) {
+export default function Playlist(playlistID, sessionToken, username) {
     const navigate = useNavigate();
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
-    const [playlists, setPlaylists] = React.useState([
-        // dummy data
-        {
-            id: 4,
-            name: "john's playlist",
-        },
-        {
-            id: 5,
-            name: "john's playlist 2",
-        },
-    ]);
+    const [anchorElUser, setAnchorElUser] = useState(null);
+    const [playlistName, setPlaylistName] = useState("");
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -43,43 +33,29 @@ function Home({ username, sessionToken, setPlaylist }) {
         setAnchorElUser(null);
     };
 
-    function handleNewPlaylistGeneration() {
-        console.log(sessionToken);
-        // send json request to server to validate user
-        fetch(backendURL + "/create-playlist/?session=" + sessionToken + "&name=new-playlist")
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                var status = data.status;
-                // if invalid user, banish to sign in
-                if (status === 400) {
-                    navigate("/sign-in");
-                } else {
-                    console.log(status);
-                }
-            });
-    }
+    const setPlaylistInfo = (name) => {
+        setPlaylistName(name);
+    };
 
-    function openPage(id) {
-        setPlaylist(id);
-        navigate("/playlist");
-    }
-
-    const getPlaylists = () => {
-        fetch(backendURL + "/get-playlists/?session=" + sessionToken)
+    useEffect(() => {
+        // checking if data is loaded
+        if (playlistID.playlistID == -1 || sessionToken == "") {
+            navigate("/home");
+        }
+        fetch(backendURL + "/get-playlist-info/?id=" + playlistID.playlistID)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
                 var status = data.status;
                 // if invalid user, banish to sign in
                 if (status === 200) {
-                    console.log("setting playlists");
-                    setPlaylists(data.playlists);
+                    console.log(data.info.name);
+                    setPlaylistInfo(data.info.name);
                 } else {
                     console.log(status);
                 }
             });
-    };
+    }, [playlistID, sessionToken]);
 
     return (
         <Box>
@@ -135,35 +111,17 @@ function Home({ username, sessionToken, setPlaylist }) {
                 </Container>
             </AppBar>
             <div className="subheader" style={{ display: "flex", flexDirection: "row" }}>
-                <div style={{ flexGrow: 1 }}>
-                    <Box>
-                        <Button
-                            variant="contained"
-                            onClick={() => {
-                                handleNewPlaylistGeneration();
-                            }}
-                        >
-                            Create New
-                        </Button>
-                    </Box>
-                </div>
-                <Paper elevation={3} style={{ flexGrow: 4, margin: "1rem" }}>
-                    <Typography variant="h4" style={{ margin: "1rem" }}>
-                        {username}'s playlists
-                    </Typography>
-                    {playlists.map((playlist) => (
-                        <Card key={playlist.id} style={{ margin: "1rem" }} variant="outlined">
-                            <CardActionArea onClick={() => openPage(playlist.id)}>
-                                <Typography style={{ margin: "1rem" }} variant="h5" component="div">
-                                    {playlist.name}
-                                </Typography>
-                            </CardActionArea>
-                        </Card>
-                    ))}
-                </Paper>
+                <Button
+                    style={{ color: "white", margin: "1rem" }}
+                    variant="contained"
+                    onClick={() => {
+                        navigate("/home");
+                    }}
+                >
+                    ← Back to playlists
+                </Button>
+                <Typography>{playlistName}</Typography>
             </div>
         </Box>
     );
 }
-
-export default Home;
