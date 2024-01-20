@@ -32,6 +32,9 @@ def sign_in(username: str, pass_hash: str) -> Response:
         print("Incorrect password")
         return make_response(jsonify({ "message": "Incorrect password" }), 400)
 
+    # clearing old sessions
+    cursor.execute(f"DELETE FROM Sessions WHERE UserID is {id};")
+
     # creating session token
     token = secrets.token_urlsafe(24)
     timestamp = int(time.time())
@@ -43,5 +46,6 @@ def sign_in(username: str, pass_hash: str) -> Response:
     response_data = {
         "message": "success",
         "session-token": token,
+        "username": username
     }
     return jsonify(response_data)
