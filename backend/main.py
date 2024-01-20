@@ -21,6 +21,12 @@ def create_account_wrapper():
     connection.commit()"""
     return flask.Response("success", mimetype='text/plain')
 
+from methods.create_playlist import create_playlist
+@app.route("/create-playlist/")
+def create_playlist_wrapper():
+    create_playlist()
+    return flask.Response("success", mimetype='text/plain')
+
 
 def main(port=5000) -> None:
     global connection
@@ -28,11 +34,13 @@ def main(port=5000) -> None:
 
     os.environ["DB_PATH"] = DATABASE_PATH
 
-    connection = sqlite3.connect("User.db")
+    connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS Users(username, password)")
     cursor.execute("CREATE TABLE IF NOT EXISTS Playlists(playlist_id, playlist_name)")
     cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist(user_playlist_id, playlist_id, username)")
+    connection.commit()
+    connection.close()
 
     app.run(port=port)
 
