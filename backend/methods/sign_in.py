@@ -1,25 +1,42 @@
 import os
-import flask
+from flask import Response, jsonify, make_response
 import sqlite3
 
-def sign_in(username: str, pass_hash: str) -> flask.Response:
+def sign_in(username: str, pass_hash: str) -> Response:
     if username == None:
-        return flask.Response("No username provided", status=400, mimetype='text/plain')
+        return Response(jsonify({"text": "No username provided"}), status=400)
     elif pass_hash == None:
-        return flask.Response("No password provided", status=400, mimetype='text/plain')
+        return Response(jsonify({"text": "No password provided"}), status=400)
 
     print(f"Attempting to sign in user \"{username}\"")
     connection = sqlite3.connect(os.environ["DB_PATH"])
     cursor = connection.cursor()
 
     result = cursor.execute(f"SELECT UserID, Password FROM Users where Username == \"{username}\";")
-    user_id, password = result.fetchone()
-    if user_id == None:
+    result = result.fetchone()
+
+    if result == None:
         connection.commit()
         connection.close()
-        return flask.Response(f"Could not find user with name \"{username}\"", status=400, mimetype='text/plain')
+        print("Couldn't find user")
+        return make_response(jsonify({ "message": f"Could not find user with name \"{username}\"" }), 400)
 
-    print(user_id, password)
+    id, stored_pass_hash = result
+
+    # checking password
+    if pass_hash != stored_pass_hash:
+        connection.commit()
+        connection.close()
+        print("Incorrect password")
+        return make_response(jsonify({ "message": "Incorrect password" }), 400)
+
+    # creating session token
+    cursor.execute(f"INSERT INTO Users (Username, Password) VALUES (\"john\", \"password\");")
+
     connection.commit()
     connection.close()
-    return flask.Response("success", status=200, mimetype='text/plain')
+    response_data = {
+        "message": "success",
+        "token": "abcde"
+    }
+    return jsonify(response_data)
