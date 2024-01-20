@@ -21,6 +21,16 @@ let username = "";
 function Home() {
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [sessionToken, setSessionToken] = React.useState("");
+  const [username, setUserName] = React.useState("");
+
+  function updateSessionToken(string) {
+    setSessionToken(string);
+  }
+
+  function updateUsername(string) {
+    setUserName(string);
+  }
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -31,6 +41,7 @@ function Home() {
   };
 
   function handleNewPlaylistGeneration() {
+    console.log(sessionToken);
     // send json request to server to validate user
     fetch(backendURL + "/create-playlist/?session=" + sessionToken + "&name=new-playlist")
       .then((response) => response.json())
@@ -40,6 +51,9 @@ function Home() {
         // if invalid user, banish to sign in
         if (status === 400) {
             navigate("/sign-in");
+        }
+        else {
+          console.log(status);
         }
     });
   }

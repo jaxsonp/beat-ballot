@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import {useNavigate} from "react-router-dom";
+import Home from "./Home"
+
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -40,23 +42,26 @@ export default function SignIn() {
         // check for valid inputs
 
         if (!empty) {
-            // TODO: send to backend to check if valid login
+            // print username/password to console
             console.log({
                 username: username,
                 password: password,
             });
-            let sessionToken = "";
+            
+            // send username/password to server
             fetch(backendURL + "/sign-in?username=" + username + "&password=" + password)
                 .then((response) => response.json())
+                // get response from server, if valid login, save session token and move to home
                 .then((data) => {
                     console.log(data)
                     var message = data.message;
-                    if (message == "success") {
-                        sessionToken = data.sessionToken;
+                    if (message === "success") {
+                        Home.updateSessionToken(data.sessionToken);
+                        Home.updateUsername(data.username);
                         navigate("/home")
                     }
-                });
-            console.log(sessionToken);
+                }
+            );
         }
     }
 
