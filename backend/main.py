@@ -82,20 +82,17 @@ def create_playlist_wrapper():
     session_token = request.args.get('session')
     if not verify_session(session_token):
         return make_response(jsonify({ "message": f"Invalid session" }), 400)
-    create_playlist(name)
+    # TODO
+    return create_playlist(name)
 
-    # print all playlists
-    """connection = sqlite3.connect(os.environ["DB_PATH"])
-    cursor = connection.cursor()
-    result = cursor.execute(f"SELECT * FROM Playlists;")
-    p = result.fetchone()
-    while p != None:
-        print(p)
-        p = result.fetchone()
-    connection.commit()
-    connection.close()"""
+from methods.get_playlists import get_playlists
+@app.route("/get-playlists/")
+def get_playlists_wrapper():
+    session_token = request.args.get('session')
+    if not verify_session(session_token):
+        return make_response(jsonify({ "message": f"Invalid session" }), 400)
 
-    return Response("success", mimetype='text/plain')
+    return get_playlists(session_token)
 
 
 # MAIN ======================================================================
@@ -110,14 +107,19 @@ def main(port=5000) -> None:
     cursor = connection.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS Users (UserID INTEGER PRIMARY KEY, Username TEXT, Password TEXT);")
     cursor.execute("CREATE TABLE IF NOT EXISTS Playlists (PlaylistID INTEGER PRIMARY KEY, PlaylistName TEXT);")
-    cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist (UserPlaylistID INTEGER PRIMARY KEY, PlaylistID INTEGER, UsernameID INTEGER);")
+    cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist (UserPlaylistID INTEGER PRIMARY KEY, PlaylistID INTEGER, UserID INTEGER);")
     cursor.execute("CREATE TABLE IF NOT EXISTS Sessions (SessionID INTEGER PRIMARY KEY, UserID INTEGER, Token TEXT, LastUsedTimestamp INTEGER);")
 
     # TEMP fake user john
     print("Inserting fake user john and his music")
-    result = cursor.execute(f"SELECT UserID, Username, Password FROM Users WHERE Username == \"john\";").fetchone()
-    if result == None:
-        cursor.execute(f"INSERT INTO Users (Username, Password) VALUES (\"john\", \"password\");")
+    cursor.execute("DELETE FROM Users WHERE Username=\"john\"")
+    cursor.execute("DELETE FROM Playlists WHERE PlaylistName=\"john's playlist\"")
+
+    cursor.execute(f"INSERT INTO Users (Username, Password) VALUES (\"john\", \"password\");")
+    john_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"john\";").fetchone()
+    cursor.execute(f"INSERT INTO Playlists (PlaylistName) VALUES (\"john's playlist\");")
+    playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistName=\"john's playlist\";").fetchone()
+    cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{john_id}\")").fetchone()
 
 
     connection.commit()
