@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -18,10 +18,12 @@ import AdbIcon from "@mui/icons-material/Adb";
 import { Button } from "@mui/material";
 
 const settings = ["Profile", "Logout"];
+const backendURL = "http://127.0.0.1:5000";
 
-export default function Playlist(playlistID) {
+export default function Playlist(playlistID, sessionToken, username) {
     const navigate = useNavigate();
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
+    const [playlistName, setPlaylistName] = useState("");
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -31,11 +33,29 @@ export default function Playlist(playlistID) {
         setAnchorElUser(null);
     };
 
+    const setPlaylistInfo = (name) => {
+        setPlaylistName(name);
+    };
+
     useEffect(() => {
-        if (playlistID.playlistID == -1) {
+        // checking if data is loaded
+        if (playlistID.playlistID == -1 || sessionToken == "") {
             navigate("/home");
         }
-    }, [playlistID]);
+        fetch(backendURL + "/get-playlist-info/?id=" + playlistID.playlistID)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                var status = data.status;
+                // if invalid user, banish to sign in
+                if (status === 200) {
+                    console.log(data.info.name);
+                    setPlaylistInfo(data.info.name);
+                } else {
+                    console.log(status);
+                }
+            });
+    }, [playlistID, sessionToken]);
 
     return (
         <Box>
@@ -100,6 +120,7 @@ export default function Playlist(playlistID) {
                 >
                     ← Back to playlists
                 </Button>
+                <Typography>{playlistName}</Typography>
             </div>
         </Box>
     );

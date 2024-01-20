@@ -44,7 +44,7 @@ def hello_world():
 
 from methods.add_user_to_playlist import add_user_to_playlist
 @app.route("/add-user-to-playlist/")
-def add_user_to_playlist_wrapper():
+def add_user_to_playlist_wrapper() -> Response:
     username = request.args.get('username')
     playlist_id = request.args.get('playlist_id')
 
@@ -54,7 +54,7 @@ def add_user_to_playlist_wrapper():
 from methods.sign_in import sign_in
 @app.route("/sign-in/")
 @handle_cors
-def sign_in_wrapper():
+def sign_in_wrapper() -> Response:
     username = request.args.get('username')
     pass_hash = request.args.get('password')
 
@@ -62,7 +62,7 @@ def sign_in_wrapper():
 
 from methods.create_account import create_account
 @app.route("/create-account/")
-def create_account_wrapper():
+def create_account_wrapper() -> Response:
     username = request.args.get('username')
     pass_hash = request.args.get('password')
 
@@ -71,7 +71,7 @@ def create_account_wrapper():
 
 from methods.create_playlist import create_playlist
 @app.route("/create-playlist/")
-def create_playlist_wrapper():
+def create_playlist_wrapper() -> Response:
     name = request.args.get('name')
     session_token = request.args.get('session')
     if not verify_session(session_token):
@@ -81,12 +81,18 @@ def create_playlist_wrapper():
 
 from methods.get_playlists import get_playlists
 @app.route("/get-playlists/")
-def get_playlists_wrapper():
+def get_playlists_wrapper() -> Response:
     session_token = request.args.get('session')
     if not verify_session(session_token):
         return make_response(jsonify({ "message": f"Invalid session" }), 400)
 
     return get_playlists(session_token)
+
+from methods.get_playlist_info import get_playlist_info
+@app.route("/get-playlist-info/")
+def get_playlist_info_wrapper() -> Response:
+    playlist_id = request.args.get('id')
+    return get_playlist_info(playlist_id)
 
 
 # MAIN ======================================================================

@@ -47,7 +47,10 @@ export default function App() {
                     path="/sign-up"
                     element={<SignUp setUsername={handleSetUsername} setSessionToken={handleSetSessionToken} />}
                 />
-                <Route path="/playlist" element={<Playlist playlistID={playlistID} />} />
+                <Route
+                    path="/playlist"
+                    element={<Playlist playlistID={playlistID} username={username} sessionToken={sessionToken} />}
+                />
                 <Route
                     path="/home"
                     element={<Home username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />}
