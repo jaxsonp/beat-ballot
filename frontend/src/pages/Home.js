@@ -1,4 +1,4 @@
-import React from "react";
+import { React } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -12,6 +12,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Button } from "@mui/material";
+import PlaylistCard from "../components/PlaylistCard";
 
 const settings = ["Profile", "Logout"];
 const backendURL = "http://127.0.0.1:5000";
@@ -19,6 +20,7 @@ const backendURL = "http://127.0.0.1:5000";
 function Home({ username, sessionToken }) {
     const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [playlists, setPlaylists] = React.useState([]);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -44,6 +46,22 @@ function Home({ username, sessionToken }) {
                 }
             });
     }
+
+    const getPlaylists = () => {
+        fetch(backendURL + "/get-playlists/?session=" + sessionToken)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                var status = data.status;
+                // if invalid user, banish to sign in
+                if (status === 200) {
+                    console.log("setting playlists");
+                    setPlaylists(data.playlists);
+                } else {
+                    console.log(status);
+                }
+            });
+    };
 
     return (
         <Box>
@@ -111,16 +129,23 @@ function Home({ username, sessionToken }) {
                     </Toolbar>
                 </Container>
             </AppBar>
-            <Box>
-                <Button
-                    variant="contained"
-                    onClick={() => {
-                        handleNewPlaylistGeneration();
-                    }}
-                >
-                    Create New
-                </Button>
-            </Box>
+            <div className="subheader" style={{ display: "flex", flexDirection: "row" }}>
+                <Box style={{ flexGrow: 1 }}>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            handleNewPlaylistGeneration();
+                        }}
+                    >
+                        Create New
+                    </Button>
+                </Box>
+                <div style={{ flexGrow: 4 }}>
+                    {playlists.map((card) => (
+                        <PlaylistCard key={card.id} name={card.name} />
+                    ))}
+                </div>
+            </div>
         </Box>
     );
 }
