@@ -77,28 +77,26 @@ export default function SignUp() {
             Sign Up For BeatBallot
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="username"
-                  label="Username"
-                  name="username"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type={showPassword ? 'text': 'password'}
-                  id="password"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
+          <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type={showPassword ? 'text': 'password'}
+              id="password"
+            />
+            <FormControlLabel
                     control={
                         <Checkbox 
                             value="showPassword" 
@@ -109,8 +107,6 @@ export default function SignUp() {
                     }
                     label="Show Password"
                 />
-              </Grid>
-            </Grid>
             <Button
               type="submit"
               fullWidth
@@ -121,7 +117,7 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/sign-in" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

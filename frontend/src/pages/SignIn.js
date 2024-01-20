@@ -50,8 +50,8 @@ export default function SignIn() {
         
         // TODO: send to backend to check if valid login
         console.log({
-            username: username.value,
-            password: password.value,
+            username: username,
+            password: password,
         });
     }
 }
@@ -115,7 +115,7 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/sign-up" variant="body2">
                   {"Sign Up for BeatBallot"}
                 </Link>
               </Grid>
