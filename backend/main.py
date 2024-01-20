@@ -13,7 +13,7 @@ def hello_world():
     return "<h1>Base route</h1>"
 
 from methods.create_account import create_account
-@app.route("/create-account/", methods=['POST'])
+@app.route("/create-account/")
 def create_account_wrapper():
     create_account(connection)
     """cursor = connection.cursor()
