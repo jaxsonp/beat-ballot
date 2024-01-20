@@ -3,7 +3,7 @@ import time
 import sqlite3
 
 def verify_session(token: str) -> bool:
-    print(f"Verifying session ({token})")
+    print(f"Verifying session ({token})... ", end="")
     connection = sqlite3.connect(os.environ["DB_PATH"])
     cursor = connection.cursor()
     result = cursor.execute(f"SELECT UserID, LastUsedTimestamp FROM Sessions where Token == \"{token}\";").fetchone()

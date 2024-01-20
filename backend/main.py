@@ -112,14 +112,33 @@ def main(port=5000) -> None:
 
     # TEMP fake user john
     print("Inserting fake user john and his music")
-    cursor.execute("DELETE FROM Users WHERE Username=\"john\"")
-    cursor.execute("DELETE FROM Playlists WHERE PlaylistName=\"john's playlist\"")
+    john_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"john\";").fetchone()[0]
+    cursor.execute("DELETE FROM Users WHERE Username=\"john\";")
+    cursor.execute("DELETE FROM Playlists WHERE PlaylistName=\"john's playlist\";")
+    cursor.execute("DELETE FROM Playlists WHERE PlaylistName=\"john's playlist 2\";")
+    cursor.execute(f"DELETE FROM UserPlaylist WHERE UserID=\"{john_id}\";")
 
     cursor.execute(f"INSERT INTO Users (Username, Password) VALUES (\"john\", \"password\");")
-    john_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"john\";").fetchone()
+    john_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"john\";").fetchone()[0]
+
     cursor.execute(f"INSERT INTO Playlists (PlaylistName) VALUES (\"john's playlist\");")
-    playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistName=\"john's playlist\";").fetchone()
-    cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{john_id}\")").fetchone()
+    playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistName=\"john's playlist\";").fetchone()[0]
+    cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{john_id}\");").fetchone()
+    print(playlist_id)
+
+    cursor.execute(f"INSERT INTO Playlists (PlaylistName) VALUES (\"john's playlist 2\");")
+    playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistName=\"john's playlist 2\";").fetchone()[0]
+    cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{john_id}\");").fetchone()
+    print(playlist_id)
+
+    result = cursor.execute("SELECT * FROM Users").fetchall()
+    print("users", result)
+
+    result = cursor.execute("SELECT * FROM Playlists").fetchall()
+    print("playlists", result)
+
+    result = cursor.execute("SELECT * FROM UserPlaylist").fetchall()
+    print("userplaylist", result)
 
 
     connection.commit()
