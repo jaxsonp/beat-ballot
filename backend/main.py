@@ -1,4 +1,5 @@
 
+import os
 import flask
 import sqlite3
 
@@ -21,10 +22,11 @@ def create_account_wrapper():
     return flask.Response("success", mimetype='text/plain')
 
 
-
 def main(port=5000) -> None:
     global connection
     print("\n\n\n")
+
+    os.environ["DB_PATH"] = DATABASE_PATH
 
     connection = sqlite3.connect("User.db")
     cursor = connection.cursor()
