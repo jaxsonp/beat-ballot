@@ -13,7 +13,7 @@ def hello_world():
     return "<h1>Base route</h1>"
 
 from methods.create_account import create_account
-@app.route("/create-account/", methods=['POST'])
+@app.route("/create-account/")
 def create_account_wrapper():
     create_account(connection)
     """cursor = connection.cursor()
@@ -28,7 +28,7 @@ def main(port=5000) -> None:
 
     os.environ["DB_PATH"] = DATABASE_PATH
 
-    connection = sqlite3.connect("User.db")
+    connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS Users(username, password)")
     cursor.execute("CREATE TABLE IF NOT EXISTS Playlists(playlist_id, playlist_name)")
