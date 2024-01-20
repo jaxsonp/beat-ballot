@@ -15,7 +15,7 @@ Creates a new playlist with the specified name
 Params:
 
 -   `name`: Name of the playlist to be created
--   `session`: Name of the playlist to be created
+-   `session`: Session token
 
 ### `/add-user-to-playlist`
 

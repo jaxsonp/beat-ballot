@@ -36,7 +36,10 @@ export default function App() {
                     path="/sign-in"
                     element={<SignIn setUsername={handleSetUsername} setSessionToken={handleSetSessionToken} />}
                 />
-                <Route path="/sign-up" element={<SignUp />} />
+                <Route
+                    path="/sign-up"
+                    element={<SignUp setUsername={handleSetUsername} setSessionToken={handleSetSessionToken} />}
+                />
                 <Route path="/home" element={<Home username={username} sessionToken={sessionToken} />} />
             </Routes>
         </Router>
