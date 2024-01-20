@@ -15,6 +15,7 @@ Creates a new playlist with the specified name
 Params:
 
 -   `name`: Name of the playlist to be created
+-   `session`: Name of the playlist to be created
 
 ### `/add-user-to-playlist`
 
@@ -38,6 +39,8 @@ Returns:
 
 ```JSON
 {
-  session-token: abc...xyz
+  "message": "success",
+  "session-token": "abc...xyz",
+  "username": "john",
 }
 ```
