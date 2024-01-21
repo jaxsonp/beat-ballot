@@ -132,6 +132,15 @@ def search_song_wrapper() -> Response:
 
     return search_song(spotify, track_name)
 
+from methods.add_user_to_playlist import add_user_to_playlist
+@app.route("/invite-user/")
+def invite_user_wrapper() -> Response:
+    username = requests.args.get('username')
+    playlist_id = request.args.get('playlist_id')
+
+    return add_user_to_playlist(username, playlist_id)
+
+
 # MAIN ======================================================================
 def main(port=5000) -> None:
     global spotify
