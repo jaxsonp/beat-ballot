@@ -45,19 +45,13 @@ function Home({ username, sessionToken }) {
     };
 
     function handleNewPlaylistGeneration() {
-        console.log(sessionToken);
+        let name = prompt("Please enter a name for the new playlist", "");
         // send json request to server to validate user
-        fetch(backendURL + "/create-playlist/?session=" + sessionToken + "&name=new-playlist")
+        fetch(backendURL + "/create-playlist/?session=" + sessionToken + "&name=" + name)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
-                var status = data.status;
-                // if invalid user, banish to sign in
-                if (status === 400) {
-                    navigate("/sign-in");
-                } else {
-                    console.log(status);
-                }
+                handleGetPlaylists();
             });
     }
 
@@ -353,7 +347,7 @@ function Home({ username, sessionToken }) {
                                             style={{ borderColor: "gray", width: "200px", color: "whitesmoke" }}
                                             variant="outlined"
                                             onClick={() => {
-                                                /* TODO */
+                                                handleInviteUser();
                                             }}
                                         >
                                             Invite new member
