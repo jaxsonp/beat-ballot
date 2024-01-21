@@ -9,7 +9,7 @@ This is BeatBallot, the world's first democratic music curator. With BeatBallot,
 
 Sometimes, we find our friends’ music tastes a bit questionable, but they disagree. Well, majority rules when you collaborate with BeatBallot! Our app allows users to merge their preferences: truly democratic playlist curation, at the click of a vote button. 
 
- ## Features
+## Features
 
 Users can create shared spotify playlists and invite their friends to collaborate. Anyone in a group can suggest songs, which will then show up in other member’s pages to be voted on. Songs with more yay's than nay's will make the playlist; others will be dropped. 
 
