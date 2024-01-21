@@ -121,6 +121,13 @@ def get_pending_songs_wrapper() -> Response:
 
     return get_pending_songs(playlist_id, spotify)
 
+from methods.search_song import search_song
+@app.route("/search-song/")
+def search_song_wrapper() -> Response:
+    track_name = request.args.get('track_name')
+
+    return search_song(spotify, track_name)
+
 # MAIN ======================================================================
 def main(port=5000) -> None:
     global spotify
