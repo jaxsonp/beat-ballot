@@ -59,8 +59,8 @@ function Home({ username, sessionToken }) {
     }
 
     function selectPlaylist(id) {
-        console.log("Selected playlist " + id);
         setSelectedPlaylist(id);
+        console.log("getting playlist info");
         fetch(backendURL + "/get-playlist-info/?id=" + id)
             .then((response) => response.json())
             .then((data) => {
@@ -74,6 +74,7 @@ function Home({ username, sessionToken }) {
                     navigate("/home");
                 }
             });
+        console.log("getting playlist users");
         fetch(backendURL + "/get-playlist-users/?id=" + id)
             .then((response) => response.json())
             .then((data) => {
@@ -85,13 +86,14 @@ function Home({ username, sessionToken }) {
                     navigate("/home");
                 }
             });
+        console.log("getting pending songs");
         fetch(backendURL + "/get-pending-songs/?playlist_id=" + id)
             .then((response) => response.json())
             .then((data) => {
                 var message = data.message;
                 if (message === "success") {
-                    console.log("pending songs");
                     console.log(data.data);
+                    setPendingSongs(data.data);
                 } else {
                     console.log(message);
                     navigate("/home");
@@ -131,6 +133,7 @@ function Home({ username, sessionToken }) {
     };
 
     const handleSubmitVote = (track_uri, yesno) => {
+        console.log("submitting vote");
         fetch(
             backendURL +
                 "/vote/?session=" +
@@ -162,7 +165,6 @@ function Home({ username, sessionToken }) {
             fetch(backendURL + "/get-playlists/?session=" + sessionToken)
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log(data.playlists);
                     setPlaylists(data.playlists);
                 });
         }
@@ -343,7 +345,32 @@ function Home({ username, sessionToken }) {
                                             Start new vote
                                         </Button>
                                     </div>
-                                    {}
+                                    {pendingSongs.map((song) => (
+                                        <Card
+                                            key={song.info.id}
+                                            variant="outlined"
+                                            style={{
+                                                padding: "0.5rem",
+                                                marginTop: "1rem",
+                                                borderColor: "#404040",
+                                                display: "flex",
+                                                flexDirection: "row",
+                                                justifyContent: "space-between",
+                                            }}
+                                        >
+                                            <div styles={{ flexGrow: 1 }}>
+                                                <Typography variant="h6">{song.info.name}</Typography>
+                                                <Typography
+                                                    variant="body2"
+                                                    color="gray"
+                                                    style={{ paddingLeft: "1rem", fontStyle: "italic" }}
+                                                >
+                                                    {song.info.artists.map((artist) => artist.name).join(", ")}
+                                                </Typography>
+                                            </div>
+                                            <div>Test</div>
+                                        </Card>
+                                    ))}
                                 </Paper>
                                 <Paper elevation={1} style={{ margin: "1rem", padding: "1rem" }}>
                                     <Typography variant="h4" style={{ marginBottom: "0.5rem", fontWeight: "bold" }}>
