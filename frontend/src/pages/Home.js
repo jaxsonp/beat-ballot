@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -31,6 +31,7 @@ function Home({ username, sessionToken }) {
     const [songSearchOpen, setSongSearchOpen] = React.useState(false);
     const [songSearchResults, setSongSearchResults] = React.useState([]);
     const [pendingSongs, setPendingSongs] = React.useState([]);
+    const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -86,7 +87,7 @@ function Home({ username, sessionToken }) {
                 }
             });
         console.log("getting pending songs");
-        fetch(backendURL + "/get-pending-songs/?playlist_id=" + id)
+        fetch(backendURL + "/get-pending-songs/?session=" + sessionToken + "&playlist_id=" + id)
             .then((response) => response.json())
             .then((data) => {
                 var message = data.message;
@@ -151,8 +152,8 @@ function Home({ username, sessionToken }) {
                     console.log(data);
                 } else {
                     console.log(message);
-                    navigate("/home");
                 }
+                forceUpdate();
             });
     };
 
@@ -367,28 +368,45 @@ function Home({ username, sessionToken }) {
                                                     {song.info.artists.map((artist) => artist.name).join(", ")}
                                                 </Typography>
                                             </div>
-                                            <div style={{ display: "flex", flexDirection: "row" }}>
-                                                <Card
-                                                    variant="outlined"
-                                                    style={{
-                                                        padding: "0.5rem",
-                                                        margin: "0.5rem",
-                                                        backgroundColor: "#388e3c",
-                                                    }}
+                                            <Typography variant="body2" style={{ margin: "1rem" }}>
+                                                ({Math.round(song.ratio * 100)}% voted yes)
+                                            </Typography>
+                                            {song.voted == 0 ? (
+                                                <div style={{ display: "flex", flexDirection: "row" }}>
+                                                    <Card
+                                                        variant="outlined"
+                                                        style={{
+                                                            padding: "0.5rem",
+                                                            margin: "0.5rem",
+                                                            backgroundColor: "#388e3c",
+                                                        }}
+                                                        onClick={() => {
+                                                            handleSubmitVote(song.info.uri, 1);
+                                                        }}
+                                                    >
+                                                        <Typography>👍</Typography>
+                                                    </Card>
+                                                    <Card
+                                                        variant="outlined"
+                                                        style={{
+                                                            padding: "0.5rem",
+                                                            margin: "0.5rem",
+                                                            backgroundColor: "#d32f2f",
+                                                        }}
+                                                        onClick={() => {
+                                                            handleSubmitVote(song.info.uri, 0);
+                                                        }}
+                                                    >
+                                                        <Typography>👎</Typography>
+                                                    </Card>
+                                                </div>
+                                            ) : (
+                                                <Typography
+                                                    style={{ marginTop: "0.75rem", fontStyle: "italic", color: "gray" }}
                                                 >
-                                                    <Typography>👍</Typography>
-                                                </Card>
-                                                <Card
-                                                    variant="outlined"
-                                                    style={{
-                                                        padding: "0.5rem",
-                                                        margin: "0.5rem",
-                                                        backgroundColor: "#d32f2f",
-                                                    }}
-                                                >
-                                                    <Typography>👎</Typography>
-                                                </Card>
-                                            </div>
+                                                    Already voted
+                                                </Typography>
+                                            )}
                                         </Card>
                                     ))}
                                 </Paper>

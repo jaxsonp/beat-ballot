@@ -1,8 +1,8 @@
 import os
-import flask
+from flask import Response, make_response, jsonify
 import sqlite3
 
-def vote(spotify, session_token, playlist_id: int, track_uri: str, yesno: int) -> flask.Response:
+def vote(spotify, session_token, playlist_id: int, track_uri: str, yesno: int) -> Response:
     connection = sqlite3.connect(os.environ["DB_PATH"])
     cursor = connection.cursor()
 
@@ -24,8 +24,8 @@ def vote(spotify, session_token, playlist_id: int, track_uri: str, yesno: int) -
     else:
         yes = 0
         no = 0
-        for i in range(len(votes) - 1):
-            if (votes[i][3] == 0):
+        for i in range(len(votes)):
+            if (votes[i][3] == 1):
                 yes += 1
             else:
                 no += 1
@@ -35,16 +35,19 @@ def vote(spotify, session_token, playlist_id: int, track_uri: str, yesno: int) -
         else:
             no += 1
 
+        cursor.execute(f'DELETE FROM Votes WHERE PlaylistURI = \'{playlist_uri}\' AND TrackURI = \'{track_uri}\';')
         if (yes > no):
             spotify.playlist_add_items(playlist_id=playlist_uri, items=[track_uri], position=None)
             print("song added to playlist")
         else:
-            cursor.execute(f'DELETE FROM Votes WHERE PlaylistID = \'{playlist_uri}\' AND TrackURI = \'{track_uri}\'')
             connection.commit()
             print("song not added/votes deleted")
 
     cursor.close()
-    return flask.Response("success", status=200, mimetype="text/plain")
+
+    return make_response(jsonify({
+        "message": "success",
+    }), 200)
 
 
 
