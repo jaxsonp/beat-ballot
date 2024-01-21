@@ -33,12 +33,19 @@ export default function App() {
                 <Route
                     path="/"
                     element={
-                        <header>
-                            <h1>Beat Ballot</h1>
-                            <a href="/sign-in">sign in</a>
-                            <br />
-                            <a href="/sign-up">sign up</a>
-                        </header>
+                        <div>
+                            <header>
+                                <h1>Beat Ballot</h1>
+                                <a href="/sign-in">sign in</a>
+                                <br />
+                                <a href="/sign-up">sign up</a>
+                            </header>
+                            <footer>
+                                <a href="https://www.flaticon.com/free-icons/poll" title="poll icons">
+                                    Poll icons created by Parzival’ 1997 - Flaticon
+                                </a>
+                            </footer>
+                        </div>
                     }
                 />
                 <Route
@@ -59,11 +66,15 @@ export default function App() {
                 />
                 <Route
                     path="/adding"
-                    element={<Adding username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />}
+                    element={
+                        <Adding username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />
+                    }
                 />
                 <Route
                     path="/deleting"
-                    element={<Deleting username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />}
+                    element={
+                        <Deleting username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />
+                    }
                 />
             </Routes>
         </Router>

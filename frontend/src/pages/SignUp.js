@@ -64,7 +64,7 @@ export default function SignUp({ setUsername, setSessionToken }) {
         });
 
         // send username/password to server
-        fetch(backendURL + "/sign-up?username=" + username + "&password=" + password)
+        fetch(backendURL + "/create-account?username=" + username + "&password=" + password)
             .then((response) => response.json())
             // get response from server, if valid login, save session token and move to home
             .then((data) => {
