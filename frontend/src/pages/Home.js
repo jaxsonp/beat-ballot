@@ -6,7 +6,6 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Paper from "@mui/material/Paper";
 import { CardActionArea } from "@mui/material";
 import Menu from "@mui/material/Menu";
@@ -358,7 +357,7 @@ function Home({ username, sessionToken }) {
                                                 justifyContent: "space-between",
                                             }}
                                         >
-                                            <div styles={{ flexGrow: 1 }}>
+                                            <div style={{ flexGrow: 1 }}>
                                                 <Typography variant="h6">{song.info.name}</Typography>
                                                 <Typography
                                                     variant="body2"
@@ -368,7 +367,28 @@ function Home({ username, sessionToken }) {
                                                     {song.info.artists.map((artist) => artist.name).join(", ")}
                                                 </Typography>
                                             </div>
-                                            <div>Test</div>
+                                            <div style={{ display: "flex", flexDirection: "row" }}>
+                                                <Card
+                                                    variant="outlined"
+                                                    style={{
+                                                        padding: "0.5rem",
+                                                        margin: "0.5rem",
+                                                        backgroundColor: "#388e3c",
+                                                    }}
+                                                >
+                                                    <Typography>👍</Typography>
+                                                </Card>
+                                                <Card
+                                                    variant="outlined"
+                                                    style={{
+                                                        padding: "0.5rem",
+                                                        margin: "0.5rem",
+                                                        backgroundColor: "#d32f2f",
+                                                    }}
+                                                >
+                                                    <Typography>👎</Typography>
+                                                </Card>
+                                            </div>
                                         </Card>
                                     ))}
                                 </Paper>
