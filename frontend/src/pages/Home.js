@@ -114,6 +114,11 @@ function Home({ username, sessionToken }) {
         p: 4,
     };
 
+    function handleLogout() {
+        setSelectedPlaylist(-1);
+        navigate("/sign-in");
+    }
+
     const handleSearch = (query) => {
         fetch(backendURL + "/search-song/?track_name=" + query)
             .then((response) => response.json())
@@ -215,7 +220,9 @@ function Home({ username, sessionToken }) {
                             >
                                 {settings.map((setting) => (
                                     <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography textAlign="center">{setting}</Typography>
+                                        <Typography textAlign="center" onClick={handleLogout}>
+                                            {setting}
+                                        </Typography>
                                     </MenuItem>
                                 ))}
                             </Menu>
