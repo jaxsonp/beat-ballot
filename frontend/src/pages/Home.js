@@ -73,7 +73,7 @@ function Home({ username, sessionToken, setPlaylist }) {
             <AppBar position="static">
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
-                        <AdbIcon sx={{ display: "flex", mr: 1 }} />
+                        <img src="/icon192.png" style={{ width: "2.5rem", marginRight: "1.5rem" }} alt="icon" />
                         <Typography
                             variant="h5"
                             component="a"

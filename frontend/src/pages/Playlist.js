@@ -75,7 +75,7 @@ export default function Playlist(playlistID, sessionToken, username) {
             <AppBar position="static">
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
-                        <AdbIcon sx={{ display: "flex", mr: 1 }} />
+                        <img src="/icon192.png" style={{ width: "2.5rem", marginRight: "1.5rem" }} alt="icon" />
                         <Typography
                             variant="h5"
                             component="a"
@@ -139,9 +139,17 @@ export default function Playlist(playlistID, sessionToken, username) {
                     <div style={{ width: "100%", maxWidth: "900px" }}>
                         <Paper elevation={3} style={{ display: "flex", margin: "1rem", padding: "1rem" }}>
                             <div style={{ flexGrow: 1 }}>
-                                <Typography variant="h2" style={{ fontWeight: "medium" }}>
-                                    {playlistInfo.name}
-                                </Typography>
+                                <Button
+                                    onClick={() => window.open("https://open.spotify.com/playlist/" + playlistInfo.id)}
+                                    variant="text"
+                                    style={{ padding: "0.5rem", paddingBottom: "0" }}
+                                >
+                                    <Tooltip title="Link to Spotify" arrow>
+                                        <Typography variant="h3" style={{ fontWeight: "medium" }}>
+                                            {playlistInfo.name}
+                                        </Typography>
+                                    </Tooltip>
+                                </Button>
                                 <Typography variant="subtitle1">{playlistInfo.description}</Typography>
                                 <hr />
                                 <Typography variant="h6">Members:</Typography>
@@ -172,7 +180,7 @@ export default function Playlist(playlistID, sessionToken, username) {
                                 Current songs in playlist:
                             </Typography>
                             {songs.map((song) => (
-                                <Card key={song.track.id} style={{ padding: "0.5rem" }}>
+                                <Card key={song.track.id} style={{ padding: "0.5rem", marginBottom: "1rem" }}>
                                     <Typography variant="h6">{song.track.name}</Typography>
                                     <Typography
                                         variant="body2"
