@@ -21,11 +21,10 @@ import { grey } from "@mui/material/colors";
 const settings = ["Profile", "Logout"];
 const backendURL = "http://127.0.0.1:5000";
 
-export default function Playlist(playlistID, sessionToken, username) {
+export default function Adding(playlistID, sessionToken, username) {
     const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [playlistName, setPlaylistName] = useState("");
-    const [songs, setSongs] = useState([]);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -119,10 +118,10 @@ export default function Playlist(playlistID, sessionToken, username) {
                     style={{ color: "white", margin: "1rem" }}
                     variant="contained"
                     onClick={() => {
-                        navigate("/home");
+                        navigate("/playlist");
                     }}
                 >
-                    ← Back to playlist
+                    ← Back to current playlists
                 </Button>
             </div>
             <Box>
@@ -131,30 +130,25 @@ export default function Playlist(playlistID, sessionToken, username) {
                 </Typography>
                 <Box border={1} padding={2} margin={3} bgcolor={grey}>
                     <Typography variant="h4">
-                        Current songs in playlist:
+                        Users voting to add song:
                     </Typography>
-                    {songs.map((songs) => (
-                    <Typography> 
-                        {songs.name}
-                    </Typography>        
-                    ))}
                 </Box>
                 <Box border={1} padding={2} margin={3} bgcolor={grey}>
                     <Typography variant="h4">
-                        Pending changes:
+                        Users voting against adding song:
                     </Typography>
                 </Box>
                 <Button
                     style={{ color: "white", margin: "1rem" }}
                     variant="contained"
-                    onClick={() => {/* Todo: function to delete from playlist */}}
-                > Add to playlist
+                    onClick={() => { /*Todo : function to vote for */}}
+                > Vote For
                 </Button>
                 <Button
                     style={{ color: "white", margin: "1rem" }}
                     variant="contained"
-                    onClick={() => { /* Todo: function to delete from playlist */}}
-                > Delete from playlist
+                    onClick={() => { /* Todo: function to vote against */}}
+                > Vote Against
                 </Button>
             </Box>
         </Box>
