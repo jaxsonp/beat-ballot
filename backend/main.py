@@ -138,7 +138,7 @@ def main(port=5000) -> None:
     cursor.execute("CREATE TABLE IF NOT EXISTS Playlists (PlaylistID INTEGER PRIMARY KEY, PlaylistURI TEXT);")
     cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist (UserPlaylistID INTEGER PRIMARY KEY, PlaylistID INTEGER, UserID INTEGER);")
     cursor.execute("CREATE TABLE IF NOT EXISTS Sessions (SessionID INTEGER PRIMARY KEY, UserID INTEGER, Token TEXT, LastUsedTimestamp INTEGER);")
-    cursor.execute("CREATE TABLE IF NOT EXISTS Votes (PlaylistID INTEGER, TrackURI TEXT, UserID INTEGER, YesNo INTEGER, PRIMARY KEY (PlaylistID, TrackURI, UserID))")
+    cursor.execute("CREATE TABLE IF NOT EXISTS Votes (PlaylistURI TEXT, TrackURI TEXT, UserID INTEGER, YesNo INTEGER, PRIMARY KEY (PlaylistURI, TrackURI, UserID))")
 
     # fake users
     print("Inserting fake users")
@@ -167,13 +167,13 @@ def main(port=5000) -> None:
     cursor.execute("DELETE FROM Playlists;") # deleting all entries
     playlists = spotify.current_user_playlists()
     for playlist in playlists["items"]:
-        cursor.execute(f"INSERT INTO Playlists (PlaylistURI) VALUES (\"{playlist["uri"]}\");")
-        playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistURI=\"{playlist["uri"]}\";").fetchone()[0]
+        cursor.execute(f"INSERT INTO Playlists (PlaylistURI) VALUES (\"{playlist['uri']}\");")
+        playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistURI=\"{playlist['uri']}\";").fetchone()[0]
         cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{john_id}\");")
         cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{bob_id}\");")
         cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{alice_id}\");")
         pass
-    print(f"success ({playlists["total"]} playlists found)")
+    print(f"success ({playlists['total']} playlists found)")
 
     result = cursor.execute("SELECT * FROM Users").fetchall()
     print("users db:", result)
