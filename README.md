@@ -1,1 +1,1 @@
-# beat-ballot
+# Beat Ballot
