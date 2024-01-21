@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -16,14 +16,15 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Button } from "@mui/material";
+import { grey } from "@mui/material/colors";
 
-const backendURL = "http://127.0.0.1:5000";
 const settings = ["Profile", "Logout"];
+const backendURL = "http://127.0.0.1:5000";
 
-function Home({ username, sessionToken, setPlaylist }) {
+export default function Deleting(playlistID, sessionToken, username) {
     const navigate = useNavigate();
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
-    const [playlists, setPlaylists] = React.useState([]);
+    const [anchorElUser, setAnchorElUser] = useState(null);
+    const [playlistName, setPlaylistName] = useState("");
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -33,40 +34,31 @@ function Home({ username, sessionToken, setPlaylist }) {
         setAnchorElUser(null);
     };
 
-    function handleNewPlaylistGeneration() {
-        console.log(sessionToken);
-        // send json request to server to validate user
-        fetch(backendURL + "/create-playlist/?session=" + sessionToken + "&name=new-playlist")
+    const setPlaylistInfo = (name) => {
+        setPlaylistName(name);
+    };
+
+    useEffect(() => {
+        // checking if data is loaded
+        if (playlistID.playlistID == -1 || sessionToken == "") {
+            navigate("/home");
+        }
+        fetch(backendURL + "/get-playlist-info/?id=" + playlistID.playlistID)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
-                var status = data.status;
+                var message = data.message;
                 // if invalid user, banish to sign in
-                if (status === 400) {
-                    navigate("/sign-in");
+                if (message === "success") {
+                    console.log(data.info.name);
+                    setPlaylistInfo(data.info.name);
+                    // TODO: get songs in playlist and pending changes
                 } else {
-                    console.log(status);
+                    console.log(message);
+                    navigate("/home");
                 }
             });
-    }
-
-    function openPage(id) {
-        setPlaylist(id);
-        navigate("/playlist");
-    }
-
-    useEffect(() => {
-        if (sessionToken == "") {
-            navigate("/");
-        } else {
-            console.log("getting playlists");
-            fetch(backendURL + "/get-playlists/?session=" + sessionToken)
-                .then((response) => response.json())
-                .then((data) => {
-                    setPlaylists(data.playlists);
-                });
-        }
-    }, [sessionToken]);
+    }, [playlistID, sessionToken]);
 
     return (
         <Box>
@@ -122,36 +114,43 @@ function Home({ username, sessionToken, setPlaylist }) {
                 </Container>
             </AppBar>
             <div className="subheader" style={{ display: "flex", flexDirection: "row" }}>
-                <div style={{ flexGrow: 1 }}>
-                    <Box>
-                        <Button
-                            variant="contained"
-                            style={{ color: "white", margin: "1rem" }}
-                            onClick={() => {
-                                handleNewPlaylistGeneration();
-                            }}
-                        >
-                            Create New
-                        </Button>
-                    </Box>
-                </div>
-                <Paper elevation={3} style={{ flexGrow: 4, margin: "1rem" }}>
-                    <Typography variant="h4" style={{ margin: "1rem" }}>
-                        {username}'s playlists
-                    </Typography>
-                    {playlists.map((playlist) => (
-                        <Card key={playlist.id} style={{ margin: "1rem" }} variant="outlined">
-                            <CardActionArea onClick={() => openPage(playlist.id)}>
-                                <Typography style={{ margin: "1rem" }} variant="h5" component="div">
-                                    {playlist.data.name}
-                                </Typography>
-                            </CardActionArea>
-                        </Card>
-                    ))}
-                </Paper>
+                <Button
+                    style={{ color: "white", margin: "1rem" }}
+                    variant="contained"
+                    onClick={() => {
+                        navigate("/playlist");
+                    }}
+                >
+                    ← Back to current playlists
+                </Button>
             </div>
+            <Box>
+                <Typography variant="h2">
+                    {playlistName}
+                </Typography>
+                <Box border={1} padding={2} margin={3} bgcolor={grey}>
+                    <Typography variant="h4">
+                        Users voting to deleting song:
+                    </Typography>
+                </Box>
+                <Box border={1} padding={2} margin={3} bgcolor={grey}>
+                    <Typography variant="h4">
+                        Users voting against deleting song:
+                    </Typography>
+                </Box>
+                <Button
+                    style={{ color: "white", margin: "1rem" }}
+                    variant="contained"
+                    onClick={() => { /*Todo : function to vote for */}}
+                > Vote For
+                </Button>
+                <Button
+                    style={{ color: "white", margin: "1rem" }}
+                    variant="contained"
+                    onClick={() => { /* Todo: function to vote against */}}
+                > Vote Against
+                </Button>
+            </Box>
         </Box>
     );
 }
-
-export default Home;

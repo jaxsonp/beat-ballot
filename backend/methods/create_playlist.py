@@ -10,6 +10,7 @@ def create_playlist(name: str) -> Response:
     connection = sqlite3.connect(os.environ["DB_PATH"])
     cursor = connection.cursor()
 
+    # TODO
     cursor.execute(f"INSERT INTO Playlists (PlaylistName)\nVALUES (\"{name}\");")
 
     user_id = cursor.execute(f"SELECT UserID FROM Sessions WHERE Token=\"{name}\";").fetchone()[0]
