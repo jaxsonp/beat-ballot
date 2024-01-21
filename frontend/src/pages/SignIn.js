@@ -7,16 +7,12 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Paper from "@mui/material/Paper";
 import Alert from "@mui/material/Alert";
 
-const defaultTheme = createTheme();
 const backendURL = "http://127.0.0.1:5000";
 
 export default function SignIn({ setUsername, setSessionToken }) {
@@ -70,68 +66,81 @@ export default function SignIn({ setUsername, setSessionToken }) {
     }
 
     return (
-        <ThemeProvider theme={defaultTheme}>
-            <Container component="main" maxWidth="xs">
-                <CssBaseline />
-                {error ? <Alert severity="error">{errorMessage}</Alert> : <></>}
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                    }}
-                >
-                    <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Sign in
-                    </Typography>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="username"
-                            label="Username"
-                            name="username"
-                            autoComplete="username"
-                            autoFocus
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                        />
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    value="showPassword"
-                                    color="primary"
-                                    checked={showPassword}
-                                    onChange={() => setShowPassword(!showPassword)}
-                                />
-                            }
-                            label="Show Password"
-                        />
-                        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                            Sign In
+        <Paper component="main" maxWidth="800px">
+            <CssBaseline />
+            {error ? <Alert severity="error">{errorMessage}</Alert> : <></>}
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                }}
+            >
+                <Avatar sx={{ m: 1, bgcolor: "light-gray", marginTop: "1rem" }}>
+                    <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                    Sign In
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="username"
+                        label="Username"
+                        name="username"
+                        autoComplete="username"
+                        autoFocus
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type={showPassword ? "text" : "password"}
+                        id="password"
+                    />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                value="showPassword"
+                                color="primary"
+                                checked={showPassword}
+                                onChange={() => setShowPassword(!showPassword)}
+                            />
+                        }
+                        label="Show Password"
+                    />
+                    <Button
+                        style={{ backgroundColor: "#29B77E" }}
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        Sign In
+                    </Button>
+                    <hr />
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                        <Typography variant="h5" style={{ margin: "1rem" }}>
+                            Or
+                        </Typography>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                        <Button
+                            style={{ backgroundColor: "#29B77E", margin: "1rem", marginTop: "0px" }}
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                            onClick={() => navigate("/sign-up")}
+                        >
+                            Sign Up
                         </Button>
-                        <Grid container>
-                            <Grid item>
-                                <Link href="/sign-up" variant="body2">
-                                    {"Sign Up to BeatBallot"}
-                                </Link>
-                            </Grid>
-                        </Grid>
-                    </Box>
+                    </div>
                 </Box>
-            </Container>
-        </ThemeProvider>
+            </Box>
+        </Paper>
     );
 }
