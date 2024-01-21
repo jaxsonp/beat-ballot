@@ -59,6 +59,8 @@ export default function SignIn({ setUsername, setSessionToken }) {
                     setErrorMessage("");
                     setUsername(data.username);
                     setSessionToken(data["session-token"]);
+                    console.log("token at sign in is:");
+                    console.log(data["session-token"]);
                     navigate("/home");
                 } else {
                     setError(true);

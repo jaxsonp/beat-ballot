@@ -109,10 +109,13 @@ from methods.vote import vote
 @app.route("/vote/")
 def vote_wrapper() -> Response:
     session_token = request.args.get('session')
+    playlist_id = request.args.get('playlist_id')
+    track_uri = request.args.get('track_uri')
+    yesno = request.args.get('yesno')
     if not verify_session(session_token):
         return make_response(jsonify({ "message": f'Invalid session' }), 400)
 
-    return make_response("place holder")#vote(playlist_id, song_uri, yesno)
+    return vote(spotify, session_token, playlist_id, track_uri, yesno)
 
 from methods.get_pending_songs import get_pending_songs
 @app.route("/get-pending-songs/")

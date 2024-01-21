@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -21,8 +21,9 @@ const settings = ["Profile", "Logout"];
 
 function Home({ username, sessionToken, setPlaylist }) {
     const navigate = useNavigate();
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
-    const [playlists, setPlaylists] = React.useState([]);
+    const [anchorElUser, setAnchorElUser] = useState(null);
+    const [playlists, setPlaylists] = useState([]);
+    const [selectedPlaylist, setSelectedPlaylist] = useState(-1);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);

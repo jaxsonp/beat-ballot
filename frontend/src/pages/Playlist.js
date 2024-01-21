@@ -26,7 +26,8 @@ export default function Playlist(playlistID, sessionToken, username) {
     const [users, setUsers] = useState([]);
     const [songs, setSongs] = useState([]);
     const [songSearchOpen, setSongSearchOpen] = React.useState(false);
-    const [searchText, setSearchText] = React.useState("");
+    const [songSearchResults, setSongSearchResults] = React.useState([]);
+    const [getSessionToken, setSessionToken] = React.useState("");
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -58,7 +59,7 @@ export default function Playlist(playlistID, sessionToken, username) {
             .then((data) => {
                 var message = data.message;
                 if (message === "success") {
-                    console.log(data);
+                    setSongSearchResults(data.data.items);
                 } else {
                     console.log(message);
                     navigate("/home");
@@ -70,11 +71,48 @@ export default function Playlist(playlistID, sessionToken, username) {
         setPlaylistInfo_(ob);
     };
 
+    const handleSubmitVote = (track_uri, yesno) => {
+        console.log(
+            backendURL +
+                `/vote/?session=${getSessionToken}` +
+                "&playlist_id=" +
+                playlistID +
+                "&track_uri=" +
+                track_uri +
+                "&yesno=" +
+                yesno
+        );
+        fetch(
+            backendURL +
+                "/vote/?session=" +
+                toString(sessionToken) +
+                "&playlist_id=" +
+                toString(playlistID) +
+                "&track_uri=" +
+                track_uri +
+                "&yesno=" +
+                yesno
+        )
+            .then((response) => response.json())
+            .then((data) => {
+                var message = data.message;
+                if (message === "success") {
+                    console.log(data);
+                } else {
+                    console.log(message);
+                    navigate("/home");
+                }
+            });
+    };
+
     useEffect(() => {
         // checking if data is loaded
         if (playlistID.playlistID === -1 || sessionToken === "") {
             navigate("/home");
         }
+        setSessionToken(`${sessionToken}`);
+        console.log("token");
+        console.log(sessionToken);
         fetch(backendURL + "/get-playlist-info/?id=" + playlistID.playlistID)
             .then((response) => response.json())
             .then((data) => {
@@ -280,7 +318,6 @@ export default function Playlist(playlistID, sessionToken, username) {
                     <div style={{ display: "flex" }}>
                         <div style={{ flexGrow: 1, border: "1px solid gray", borderRadius: "4px" }}>
                             <TextField
-                                className="search-box"
                                 id="standard-search"
                                 label="Search field"
                                 type="search"
@@ -291,10 +328,28 @@ export default function Playlist(playlistID, sessionToken, username) {
                         <Button
                             variant="outlined"
                             style={{ borderColor: "gray", color: "whitesmoke", padding: "8px", margin: "0.5rem" }}
-                            onClick={() => handleSearch(document.getElementById("textbox_id").value)}
+                            onClick={() => handleSearch(document.getElementById("standard-search").value)}
                         >
                             Submit
                         </Button>
+                    </div>
+                    <br />
+                    <div>
+                        {songSearchResults.map((song) => (
+                            <Card
+                                variant="outlined"
+                                key={song.id}
+                                style={{ padding: "0.25rem", margin: "0.5rem", borderColor: "#404040" }}
+                                onClick={() => {
+                                    handleSubmitVote(song.uri, 1);
+                                }}
+                            >
+                                <Typography variant="body1">{song.name}</Typography>
+                                <Typography variant="body2" style={{ color: "gray", fontStyle: "italic" }}>
+                                    {song.artists.map((artist) => artist.name).join(", ")}
+                                </Typography>
+                            </Card>
+                        ))}
                     </div>
                 </Box>
             </Modal>
