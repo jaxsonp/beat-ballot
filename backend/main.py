@@ -112,7 +112,14 @@ def vote_wrapper() -> Response:
     if not verify_session(session_token):
         return make_response(jsonify({ "message": f'Invalid session' }), 400)
 
-    return vote(playlist_id, song_uri, yesno)
+    return make_response("place holder")#vote(playlist_id, song_uri, yesno)
+
+from methods.get_pending_songs import get_pending_songs
+@app.route("/get-pending-songs/")
+def get_pending_songs_wrapper() -> Response:
+    playlist_id = request.args.get('playlist_id')
+
+    return get_pending_songs(playlist_id, spotify)
 
 # MAIN ======================================================================
 def main(port=5000) -> None:

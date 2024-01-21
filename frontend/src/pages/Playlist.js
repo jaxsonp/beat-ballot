@@ -52,7 +52,7 @@ export default function Playlist(playlistID, sessionToken, username) {
             .then((data) => {
                 var message = data.message;
                 if (message === "success") {
-                    console.log(data.info);
+                    //console.log(data.info);
                     setPlaylistInfo(data.info);
                     setSongs(data.info.tracks.items);
                 } else {
@@ -66,6 +66,17 @@ export default function Playlist(playlistID, sessionToken, username) {
                 var message = data.message;
                 if (message === "success") {
                     setUsers(data.users);
+                } else {
+                    console.log(message);
+                    navigate("/home");
+                }
+            });
+        fetch(backendURL + "/get-pending-songs/?playlist_id=" + playlistID.playlistID)
+            .then((response) => response.json())
+            .then((data) => {
+                var message = data.message;
+                if (message === "success") {
+                    console.log(data);
                 } else {
                     console.log(message);
                     navigate("/home");
