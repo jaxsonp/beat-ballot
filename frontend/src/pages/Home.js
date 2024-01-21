@@ -17,8 +17,9 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Button } from "@mui/material";
 
-const settings = ["Profile", "Logout"];
+
 const backendURL = "http://127.0.0.1:5000";
+const settings = ['Profile', 'Logout'];
 
 function Home({ username, sessionToken, setPlaylist }) {
     const navigate = useNavigate();
@@ -139,6 +140,7 @@ function Home({ username, sessionToken, setPlaylist }) {
                     <Box>
                         <Button
                             variant="contained"
+                            style={{ color: "white", margin: "1rem" }}
                             onClick={() => {
                                 handleNewPlaylistGeneration();
                             }}

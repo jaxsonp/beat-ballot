@@ -16,6 +16,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Button } from "@mui/material";
+import { grey } from "@mui/material/colors";
 
 const settings = ["Profile", "Logout"];
 const backendURL = "http://127.0.0.1:5000";
@@ -24,6 +25,7 @@ export default function Playlist(playlistID, sessionToken, username) {
     const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [playlistName, setPlaylistName] = useState("");
+    const [songs, setSongs] = useState([]);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -46,13 +48,15 @@ export default function Playlist(playlistID, sessionToken, username) {
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
-                var status = data.status;
+                var message = data.message;
                 // if invalid user, banish to sign in
-                if (status === 200) {
+                if (message === "success") {
                     console.log(data.info.name);
                     setPlaylistInfo(data.info.name);
+                    // TODO: get songs in playlist and pending changes
                 } else {
-                    console.log(status);
+                    console.log(message);
+                    navigate("/home");
                 }
             });
     }, [playlistID, sessionToken]);
@@ -120,8 +124,39 @@ export default function Playlist(playlistID, sessionToken, username) {
                 >
                     ← Back to playlists
                 </Button>
-                <Typography>{playlistName}</Typography>
             </div>
+            <Box>
+                <Typography variant="h2">
+                    {playlistName}
+                </Typography>
+                <Box border={1} padding={2} margin={3} bgcolor={grey}>
+                    <Typography variant="h4">
+                        Current songs in playlist:
+                    </Typography>
+                    {songs.map((songs) => (
+                    <Typography> 
+                        {songs.name}
+                    </Typography>        
+                    ))}
+                </Box>
+                <Box border={1} padding={2} margin={3} bgcolor={grey}>
+                    <Typography variant="h4">
+                        Pending changes:
+                    </Typography>
+                </Box>
+                <Button
+                    style={{ color: "white", margin: "1rem" }}
+                    variant="contained"
+                    onClick={() => { /* Todo: function to add to playlist */}}
+                > Add to playlist
+                </Button>
+                <Button
+                    style={{ color: "white", margin: "1rem" }}
+                    variant="contained"
+                    onClick={() => { /* Todo: function to delete from playlist */}}
+                > Delete from playlist
+                </Button>
+            </Box>
         </Box>
     );
 }
