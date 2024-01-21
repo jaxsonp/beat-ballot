@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -23,19 +23,7 @@ const settings = ["Profile", "Logout"];
 function Home({ username, sessionToken, setPlaylist }) {
     const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = React.useState(null);
-    const [playlists, setPlaylists] = React.useState(
-        /*[
-        // dummy data
-        {
-            id: 4,
-            name: "john's playlist",
-        },
-        {
-            id: 5,
-            name: "john's playlist 2",
-        },
-    ]*/ null
-    );
+    const [playlists, setPlaylists] = React.useState([]);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -67,21 +55,18 @@ function Home({ username, sessionToken, setPlaylist }) {
         navigate("/playlist");
     }
 
-    const getPlaylists = () => {
-        fetch(backendURL + "/get-playlists/?session=" + sessionToken)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                var status = data.status;
-                // if invalid user, banish to sign in
-                if (status === 200) {
-                    console.log("setting playlists");
+    useEffect(() => {
+        if (sessionToken == "") {
+            navigate("/");
+        } else {
+            console.log("getting playlists");
+            fetch(backendURL + "/get-playlists/?session=" + sessionToken)
+                .then((response) => response.json())
+                .then((data) => {
                     setPlaylists(data.playlists);
-                } else {
-                    console.log(status);
-                }
-            });
-    };
+                });
+        }
+    }, [sessionToken]);
 
     return (
         <Box>
@@ -158,7 +143,7 @@ function Home({ username, sessionToken, setPlaylist }) {
                         <Card key={playlist.id} style={{ margin: "1rem" }} variant="outlined">
                             <CardActionArea onClick={() => openPage(playlist.id)}>
                                 <Typography style={{ margin: "1rem" }} variant="h5" component="div">
-                                    {playlist.name}
+                                    {playlist.data.name}
                                 </Typography>
                             </CardActionArea>
                         </Card>

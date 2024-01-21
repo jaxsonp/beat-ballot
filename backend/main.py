@@ -97,7 +97,13 @@ from methods.get_playlist_info import get_playlist_info
 @app.route("/get-playlist-info/")
 def get_playlist_info_wrapper() -> Response:
     playlist_id = request.args.get('id')
-    return get_playlist_info(playlist_id)
+    return get_playlist_info(playlist_id, spotify)
+
+from methods.get_playlist_users import get_playlist_users
+@app.route("/get-playlist-users/")
+def get_playlist_users_wrapper() -> Response:
+    playlist_id = request.args.get('id')
+    return get_playlist_users(playlist_id)
 
 
 # MAIN ======================================================================
@@ -125,14 +131,28 @@ def main(port=5000) -> None:
     cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist (UserPlaylistID INTEGER PRIMARY KEY, PlaylistID INTEGER, UserID INTEGER);")
     cursor.execute("CREATE TABLE IF NOT EXISTS Sessions (SessionID INTEGER PRIMARY KEY, UserID INTEGER, Token TEXT, LastUsedTimestamp INTEGER);")
 
-    # TEMP fake user john
-    print("Inserting fake user john and his music")
+    # fake users
+    print("Inserting fake users")
     john_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"john\";").fetchone()
     cursor.execute("DELETE FROM Users WHERE Username=\"john\";")
     if john_id != None:
         cursor.execute(f"DELETE FROM UserPlaylist WHERE UserID=\"{john_id[0]}\";")
     cursor.execute(f"INSERT INTO Users (Username, Password) VALUES (\"john\", \"password\");")
     john_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"john\";").fetchone()[0]
+
+    alice_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"alice\";").fetchone()
+    cursor.execute("DELETE FROM Users WHERE Username=\"alice\";")
+    if alice_id != None:
+        cursor.execute(f"DELETE FROM UserPlaylist WHERE UserID=\"{alice_id[0]}\";")
+    cursor.execute(f"INSERT INTO Users (Username, Password) VALUES (\"alice\", \"password\");")
+    alice_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"alice\";").fetchone()[0]
+
+    bob_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"bob\";").fetchone()
+    cursor.execute("DELETE FROM Users WHERE Username=\"bob\";")
+    if bob_id != None:
+        cursor.execute(f"DELETE FROM UserPlaylist WHERE UserID=\"{bob_id[0]}\";")
+    cursor.execute(f"INSERT INTO Users (Username, Password) VALUES (\"bob\", \"password\");")
+    bob_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"bob\";").fetchone()[0]
 
     print("Syncing playlists... ", end="")
     cursor.execute("DELETE FROM Playlists;") # deleting all entries
@@ -141,6 +161,8 @@ def main(port=5000) -> None:
         cursor.execute(f"INSERT INTO Playlists (PlaylistURI) VALUES (\"{playlist["uri"]}\");")
         playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistURI=\"{playlist["uri"]}\";").fetchone()[0]
         cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{john_id}\");")
+        cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{bob_id}\");")
+        cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{alice_id}\");")
         pass
     print(f"success ({playlists["total"]} playlists found)")
 

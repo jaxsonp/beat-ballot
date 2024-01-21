@@ -24,7 +24,8 @@ const backendURL = "http://127.0.0.1:5000";
 export default function Playlist(playlistID, sessionToken, username) {
     const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = useState(null);
-    const [playlistName, setPlaylistName] = useState("");
+    const [playlistInfo, setPlaylistInfo_] = useState(null);
+    const [users, setUsers] = useState([]);
     const [songs, setSongs] = useState([]);
 
     const handleOpenUserMenu = (event) => {
@@ -35,8 +36,8 @@ export default function Playlist(playlistID, sessionToken, username) {
         setAnchorElUser(null);
     };
 
-    const setPlaylistInfo = (name) => {
-        setPlaylistName(name);
+    const setPlaylistInfo = (ob) => {
+        setPlaylistInfo_(ob);
     };
 
     useEffect(() => {
@@ -47,13 +48,21 @@ export default function Playlist(playlistID, sessionToken, username) {
         fetch(backendURL + "/get-playlist-info/?id=" + playlistID.playlistID)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
                 var message = data.message;
-                // if invalid user, banish to sign in
                 if (message === "success") {
-                    console.log(data.info.name);
-                    setPlaylistInfo(data.info.name);
-                    // TODO: get songs in playlist and pending changes
+                    setPlaylistInfo(data.info);
+                    setSongs(data.info.tracks.items);
+                } else {
+                    console.log(message);
+                    navigate("/home");
+                }
+            });
+        fetch(backendURL + "/get-playlist-users/?id=" + playlistID.playlistID)
+            .then((response) => response.json())
+            .then((data) => {
+                var message = data.message;
+                if (message === "success") {
+                    setUsers(data.users);
                 } else {
                     console.log(message);
                     navigate("/home");
@@ -122,41 +131,84 @@ export default function Playlist(playlistID, sessionToken, username) {
                         navigate("/home");
                     }}
                 >
-                    ← Back to playlist
+                    ← Back to all playlists
                 </Button>
             </div>
-            <Box>
-                <Typography variant="h2">
-                    {playlistName}
-                </Typography>
-                <Box border={1} padding={2} margin={3} bgcolor={grey}>
-                    <Typography variant="h4">
-                        Current songs in playlist:
-                    </Typography>
-                    {songs.map((songs) => (
-                    <Typography> 
-                        {songs.name}
-                    </Typography>        
-                    ))}
-                </Box>
-                <Box border={1} padding={2} margin={3} bgcolor={grey}>
-                    <Typography variant="h4">
-                        Pending changes:
-                    </Typography>
-                </Box>
-                <Button
-                    style={{ color: "white", margin: "1rem" }}
-                    variant="contained"
-                    onClick={() => {/* Todo: function to delete from playlist */}}
-                > Add to playlist
-                </Button>
-                <Button
-                    style={{ color: "white", margin: "1rem" }}
-                    variant="contained"
-                    onClick={() => { /* Todo: function to delete from playlist */}}
-                > Delete from playlist
-                </Button>
-            </Box>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                {playlistInfo ? (
+                    <div style={{ width: "100%", maxWidth: "900px" }}>
+                        <Paper elevation={3} style={{ display: "flex", margin: "1rem", padding: "1rem" }}>
+                            <div style={{ flexGrow: 1 }}>
+                                <Typography variant="h2" style={{ fontWeight: "medium" }}>
+                                    {playlistInfo.name}
+                                </Typography>
+                                <Typography variant="subtitle1">{playlistInfo.description}</Typography>
+                                <hr />
+                                <Typography variant="h6">Members:</Typography>
+                                <ul style={{ margin: "0", paddingLeft: "1.5rem" }}>
+                                    {users.map((user) => (
+                                        <li key={user}>
+                                            <Typography variant="body2">{user}</Typography>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <img
+                                src={
+                                    playlistInfo.images == null
+                                        ? "https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2"
+                                        : playlistInfo.images[0].url
+                                }
+                                width="200px"
+                                height="200px"
+                                style={{ margin: "1rem" }}
+                            ></img>
+                        </Paper>
+                        <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
+                            <Typography variant="h4">Pending changes:</Typography>
+                        </Paper>
+                        <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
+                            <Typography variant="h4" style={{ marginBottom: "0.5rem" }}>
+                                Current songs in playlist:
+                            </Typography>
+                            {songs.map((song) => (
+                                <Card key={song.track.id} style={{ padding: "0.5rem" }}>
+                                    <Typography variant="h6">{song.track.name}</Typography>
+                                    <Typography
+                                        variant="body2"
+                                        color={grey}
+                                        style={{ paddingLeft: "1rem", fontStyle: "italic" }}
+                                    >
+                                        {song.track.artists.map((artist) => artist.name).join(", ")}
+                                    </Typography>
+                                </Card>
+                            ))}
+                        </Paper>
+                        <Button
+                            style={{ color: "white", margin: "1rem" }}
+                            variant="contained"
+                            onClick={() => {
+                                /* Todo: function to delete from playlist */
+                            }}
+                        >
+                            {" "}
+                            Add to playlist
+                        </Button>
+                        <Button
+                            style={{ color: "white", margin: "1rem" }}
+                            variant="contained"
+                            onClick={() => {
+                                /* Todo: function to delete from playlist */
+                            }}
+                        >
+                            {" "}
+                            Delete from playlist
+                        </Button>
+                    </div>
+                ) : (
+                    <div></div>
+                )}
+            </div>
         </Box>
     );
 }
