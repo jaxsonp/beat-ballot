@@ -77,12 +77,12 @@ def create_account_wrapper() -> Response:
 from methods.create_playlist import create_playlist
 @app.route("/create-playlist/")
 def create_playlist_wrapper() -> Response:
-    name = request.args.get('name')
+    playlist_name = request.args.get('name')
     session_token = request.args.get('session')
     if not verify_session(session_token):
         return make_response(jsonify({ "message": f"Invalid session" }), 400)
     # TODO
-    return create_playlist(name)
+    return create_playlist(spotify, session_token, playlist_name)
 
 from methods.get_playlists import get_playlists
 @app.route("/get-playlists/")
@@ -146,7 +146,7 @@ def main(port=5000) -> None:
     os.environ["SPOTIPY_REDIRECT_URI"] = "http://localhost:9000"
 
     spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-public"))
-    user_id = '3155xuovzdtbx6zmcnmytz3qg6yi'
+    os.environ["USER_ID"] = '3155xuovzdtbx6zmcnmytz3qg6yi'
     print("success")
 
     print("Connecting to database")
