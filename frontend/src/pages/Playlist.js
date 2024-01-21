@@ -14,7 +14,6 @@ import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import { Button } from "@mui/material";
 import { grey } from "@mui/material/colors";
 
@@ -42,7 +41,7 @@ export default function Playlist(playlistID, sessionToken, username) {
 
     useEffect(() => {
         // checking if data is loaded
-        if (playlistID.playlistID == -1 || sessionToken == "") {
+        if (playlistID.playlistID === -1 || sessionToken === "") {
             navigate("/home");
         }
         fetch(backendURL + "/get-playlist-info/?id=" + playlistID.playlistID)
@@ -50,6 +49,7 @@ export default function Playlist(playlistID, sessionToken, username) {
             .then((data) => {
                 var message = data.message;
                 if (message === "success") {
+                    console.log(data.info);
                     setPlaylistInfo(data.info);
                     setSongs(data.info.tracks.items);
                 } else {
@@ -68,7 +68,7 @@ export default function Playlist(playlistID, sessionToken, username) {
                     navigate("/home");
                 }
             });
-    }, [playlistID, sessionToken]);
+    }, [playlistID, sessionToken, navigate]);
 
     return (
         <Box>
@@ -162,6 +162,7 @@ export default function Playlist(playlistID, sessionToken, username) {
                                 </ul>
                             </div>
                             <img
+                                alt="Playlist cover image"
                                 src={
                                     playlistInfo.images == null
                                         ? "https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2"
@@ -173,10 +174,23 @@ export default function Playlist(playlistID, sessionToken, username) {
                             ></img>
                         </Paper>
                         <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
-                            <Typography variant="h4">Pending changes:</Typography>
+                            <div style={{ display: "flex" }}>
+                                <Typography variant="h4" style={{ fontWeight: "bold", flexGrow: 1 }}>
+                                    Pending changes:
+                                </Typography>
+                                <Button
+                                    style={{ color: "white" }}
+                                    variant="contained"
+                                    onClick={() => {
+                                        /* Todo: function to delete from playlist */
+                                    }}
+                                >
+                                    Start new vote
+                                </Button>
+                            </div>
                         </Paper>
                         <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
-                            <Typography variant="h4" style={{ marginBottom: "0.5rem" }}>
+                            <Typography variant="h4" style={{ marginBottom: "0.5rem", fontWeight: "bold" }}>
                                 Current songs in playlist:
                             </Typography>
                             {songs.map((song) => (
@@ -192,26 +206,6 @@ export default function Playlist(playlistID, sessionToken, username) {
                                 </Card>
                             ))}
                         </Paper>
-                        <Button
-                            style={{ color: "white", margin: "1rem" }}
-                            variant="contained"
-                            onClick={() => {
-                                /* Todo: function to delete from playlist */
-                            }}
-                        >
-                            {" "}
-                            Add to playlist
-                        </Button>
-                        <Button
-                            style={{ color: "white", margin: "1rem" }}
-                            variant="contained"
-                            onClick={() => {
-                                /* Todo: function to delete from playlist */
-                            }}
-                        >
-                            {" "}
-                            Delete from playlist
-                        </Button>
                     </div>
                 ) : (
                     <div></div>

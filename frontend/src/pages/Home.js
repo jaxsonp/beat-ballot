@@ -14,7 +14,6 @@ import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import { Button } from "@mui/material";
 
 const backendURL = "http://127.0.0.1:5000";
@@ -56,13 +55,14 @@ function Home({ username, sessionToken, setPlaylist }) {
     }
 
     useEffect(() => {
-        if (sessionToken == "") {
+        if (sessionToken === "") {
             navigate("/");
         } else {
             console.log("getting playlists");
             fetch(backendURL + "/get-playlists/?session=" + sessionToken)
                 .then((response) => response.json())
                 .then((data) => {
+                    console.log(data.playlists);
                     setPlaylists(data.playlists);
                 });
         }
@@ -121,28 +121,41 @@ function Home({ username, sessionToken, setPlaylist }) {
                     </Toolbar>
                 </Container>
             </AppBar>
-            <div className="subheader" style={{ display: "flex", flexDirection: "row" }}>
-                <div style={{ flexGrow: 1 }}>
-                    <Box>
-                        <Button
-                            variant="contained"
-                            style={{ color: "white", margin: "1rem" }}
-                            onClick={() => {
-                                handleNewPlaylistGeneration();
-                            }}
-                        >
-                            Create New
-                        </Button>
-                    </Box>
-                </div>
-                <Paper elevation={3} style={{ flexGrow: 4, margin: "1rem" }}>
-                    <Typography variant="h4" style={{ margin: "1rem" }}>
-                        {username}'s playlists
-                    </Typography>
+            <div className="subheader" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Paper elevation={3} style={{ width: "100%", maxWidth: "900px", margin: "1rem" }}>
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                        <Typography variant="h4" style={{ margin: "1rem", fontWeight: "bold" }}>
+                            {username}'s Playlists:
+                        </Typography>
+                        <Box>
+                            <Button
+                                variant="contained"
+                                style={{ color: "white", margin: "1rem" }}
+                                onClick={() => {
+                                    handleNewPlaylistGeneration();
+                                }}
+                            >
+                                Create New
+                            </Button>
+                        </Box>
+                    </div>
                     {playlists.map((playlist) => (
                         <Card key={playlist.id} style={{ margin: "1rem" }} variant="outlined">
-                            <CardActionArea onClick={() => openPage(playlist.id)}>
-                                <Typography style={{ margin: "1rem" }} variant="h5" component="div">
+                            <CardActionArea
+                                onClick={() => openPage(playlist.id)}
+                                style={{ display: "flex", alignContent: "flex-start", padding: "1rem" }}
+                            >
+                                <img
+                                    alt="cover image"
+                                    src={
+                                        playlist.data.images == null
+                                            ? "https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2"
+                                            : playlist.data.images[0].url
+                                    }
+                                    width="48"
+                                    height="48"
+                                ></img>
+                                <Typography style={{ marginLeft: "1rem", flexGrow: 1 }} variant="h5" component="div">
                                     {playlist.data.name}
                                 </Typography>
                             </CardActionArea>

@@ -18,7 +18,6 @@ def get_playlists(session_token: str, spotify) -> Response:
             "id": playlist_id,
             "data": data
         })
-
     connection.commit()
     connection.close()
     return make_response(jsonify({
