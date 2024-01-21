@@ -8,13 +8,14 @@ def get_pending_songs(playlist_id: int, spotify) -> Response:
 
     connection = sqlite3.connect(os.environ["DB_PATH"])
     cursor = connection.cursor()
-
-    playlist_uri = cursor.execute(f"SELECT PlaylistURI FROM Playlists WHERE PlaylistID = \"{playlist_id}\";")
+    playlist_uri = cursor.execute(f"SELECT PlaylistURI FROM Playlists WHERE PlaylistID = \"{playlist_id}\";").fetchone()[0]
+    print("uri ", playlist_uri)
     pending_songs = cursor.execute(f'SELECT DISTINCT TrackURI FROM Votes WHERE PlaylistURI = \'{playlist_uri}\';').fetchall()
     connection.commit()
     print(pending_songs)
     data = []
     for track_uri in pending_songs:
+        track_uri = track_uri[0]
         info = spotify.track(track_uri)
 
         total_users = cursor.execute(f'SELECT * FROM UserPlaylist WHERE PlaylistID = {playlist_id};').fetchall()

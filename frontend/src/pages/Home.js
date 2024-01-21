@@ -15,15 +15,23 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { Button } from "@mui/material";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
 
 const backendURL = "http://127.0.0.1:5000";
 const settings = ["Profile", "Logout"];
 
-function Home({ username, sessionToken, setPlaylist }) {
+function Home({ username, sessionToken }) {
     const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [playlists, setPlaylists] = useState([]);
     const [selectedPlaylist, setSelectedPlaylist] = useState(-1);
+    const [playlistInfo, setPlaylistInfo_] = useState(null);
+    const [users, setUsers] = useState([]);
+    const [songs, setSongs] = useState([]);
+    const [songSearchOpen, setSongSearchOpen] = React.useState(false);
+    const [songSearchResults, setSongSearchResults] = React.useState([]);
+    const [pendingSongs, setPendingSongs] = React.useState([]);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -50,10 +58,101 @@ function Home({ username, sessionToken, setPlaylist }) {
             });
     }
 
-    function openPage(id) {
-        setPlaylist(id);
-        navigate("/playlist");
+    function selectPlaylist(id) {
+        console.log("Selected playlist " + id);
+        setSelectedPlaylist(id);
+        fetch(backendURL + "/get-playlist-info/?id=" + id)
+            .then((response) => response.json())
+            .then((data) => {
+                var message = data.message;
+                if (message === "success") {
+                    //console.log(data.info);
+                    setPlaylistInfo(data.info);
+                    setSongs(data.info.tracks.items);
+                } else {
+                    console.log(message);
+                    navigate("/home");
+                }
+            });
+        fetch(backendURL + "/get-playlist-users/?id=" + id)
+            .then((response) => response.json())
+            .then((data) => {
+                var message = data.message;
+                if (message === "success") {
+                    setUsers(data.users);
+                } else {
+                    console.log(message);
+                    navigate("/home");
+                }
+            });
+        fetch(backendURL + "/get-pending-songs/?playlist_id=" + id)
+            .then((response) => response.json())
+            .then((data) => {
+                var message = data.message;
+                if (message === "success") {
+                    console.log("pending songs");
+                    console.log(data.data);
+                } else {
+                    console.log(message);
+                    navigate("/home");
+                }
+            });
     }
+
+    const handleSongSearchOpen = () => setSongSearchOpen(true);
+    const handleSongSearchClose = () => setSongSearchOpen(false);
+    const modalStyle = {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 500,
+        bgcolor: "background.paper",
+        boxShadow: 24,
+        p: 4,
+    };
+
+    const handleSearch = (query) => {
+        fetch(backendURL + "/search-song/?track_name=" + query)
+            .then((response) => response.json())
+            .then((data) => {
+                var message = data.message;
+                if (message === "success") {
+                    setSongSearchResults(data.data.items);
+                } else {
+                    console.log(message);
+                    navigate("/home");
+                }
+            });
+    };
+
+    const setPlaylistInfo = (ob) => {
+        setPlaylistInfo_(ob);
+    };
+
+    const handleSubmitVote = (track_uri, yesno) => {
+        fetch(
+            backendURL +
+                "/vote/?session=" +
+                sessionToken +
+                "&playlist_id=" +
+                selectedPlaylist +
+                "&track_uri=" +
+                track_uri +
+                "&yesno=" +
+                yesno
+        )
+            .then((response) => response.json())
+            .then((data) => {
+                var message = data.message;
+                if (message === "success") {
+                    console.log(data);
+                } else {
+                    console.log(message);
+                    navigate("/home");
+                }
+            });
+    };
 
     useEffect(() => {
         if (sessionToken === "") {
@@ -67,7 +166,7 @@ function Home({ username, sessionToken, setPlaylist }) {
                     setPlaylists(data.playlists);
                 });
         }
-    }, [sessionToken]);
+    }, [sessionToken, navigate]);
 
     return (
         <Box>
@@ -122,8 +221,16 @@ function Home({ username, sessionToken, setPlaylist }) {
                     </Toolbar>
                 </Container>
             </AppBar>
-            <div className="subheader" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <Paper elevation={1} style={{ width: "100%", maxWidth: "900px", margin: "1rem" }}>
+            <div
+                className="subheader"
+                style={{
+                    display: "flex",
+                    justifyContent: "space-evenly",
+                    margin: "0",
+                    padding: "1rem",
+                }}
+            >
+                <Paper elevation={1} style={{ flexGrow: 1, maxWidth: "900px", margin: "1rem" }}>
                     <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                         <Typography variant="h4" style={{ margin: "1rem", fontWeight: "bold" }}>
                             {username}'s Playlists:
@@ -143,8 +250,13 @@ function Home({ username, sessionToken, setPlaylist }) {
                     {playlists.map((playlist) => (
                         <Card key={playlist.id} style={{ margin: "1rem", borderColor: "#505050" }} variant="outlined">
                             <CardActionArea
-                                onClick={() => openPage(playlist.id)}
-                                style={{ display: "flex", alignContent: "flex-start", padding: "1rem" }}
+                                onClick={() => selectPlaylist(playlist.id)}
+                                style={{
+                                    display: "flex",
+                                    alignContent: "flex-start",
+                                    padding: "1rem",
+                                    border: playlist.id === selectedPlaylist ? "4px solid #2090A0" : "",
+                                }}
                             >
                                 <img
                                     alt="cover image"
@@ -163,7 +275,170 @@ function Home({ username, sessionToken, setPlaylist }) {
                         </Card>
                     ))}
                 </Paper>
+                {selectedPlaylist === -1 ? (
+                    <></>
+                ) : (
+                    <div style={{ flexGrow: "4", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        {playlistInfo ? (
+                            <div style={{ width: "100%", maxWidth: "900px" }}>
+                                <Paper elevation={1} style={{ display: "flex", margin: "1rem", padding: "1rem" }}>
+                                    <div style={{ flexGrow: 1 }}>
+                                        <Button
+                                            onClick={() =>
+                                                window.open("https://open.spotify.com/playlist/" + playlistInfo.id)
+                                            }
+                                            variant="text"
+                                            style={{ padding: "0.5rem", paddingBottom: "0" }}
+                                        >
+                                            <Tooltip
+                                                title="Link to Spotify"
+                                                arrow
+                                                onClick={() =>
+                                                    window.open("https://open.spotify.com/playlist/" + playlistInfo.id)
+                                                }
+                                            >
+                                                <Typography
+                                                    variant="h3"
+                                                    style={{ fontWeight: "bold", color: "#e0e0e0" }}
+                                                >
+                                                    {playlistInfo.name}
+                                                </Typography>
+                                            </Tooltip>
+                                        </Button>
+                                        <Typography variant="subtitle1">{playlistInfo.description}</Typography>
+                                        <hr />
+                                        <Typography variant="h6">Members:</Typography>
+                                        <ul style={{ margin: "0", paddingLeft: "1.5rem" }}>
+                                            {users.map((user) => (
+                                                <li key={user}>
+                                                    <Typography variant="body2">{user}</Typography>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                    <img
+                                        alt="Playlist cover image"
+                                        src={
+                                            playlistInfo.images == null
+                                                ? "https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2"
+                                                : playlistInfo.images[0].url
+                                        }
+                                        width="200px"
+                                        height="200px"
+                                        style={{ margin: "1rem" }}
+                                    ></img>
+                                </Paper>
+                                <Paper elevation={1} style={{ margin: "1rem", padding: "1rem" }}>
+                                    <div style={{ display: "flex" }}>
+                                        <Typography variant="h4" style={{ fontWeight: "bold", flexGrow: 1 }}>
+                                            Pending changes:
+                                        </Typography>
+                                        <Button
+                                            style={{ borderColor: "gray", color: "whitesmoke" }}
+                                            variant="outlined"
+                                            onClick={() => {
+                                                handleSongSearchOpen();
+                                            }}
+                                        >
+                                            Start new vote
+                                        </Button>
+                                    </div>
+                                    {}
+                                </Paper>
+                                <Paper elevation={1} style={{ margin: "1rem", padding: "1rem" }}>
+                                    <Typography variant="h4" style={{ marginBottom: "0.5rem", fontWeight: "bold" }}>
+                                        Current songs in playlist:
+                                    </Typography>
+                                    {songs.map((song) => (
+                                        <Card
+                                            variant="outlined"
+                                            key={song.track.id}
+                                            style={{
+                                                padding: "0.5rem",
+                                                marginBottom: "1rem",
+                                                borderColor: "#404040",
+                                            }}
+                                        >
+                                            <Typography variant="h6">{song.track.name}</Typography>
+                                            <Typography
+                                                variant="body2"
+                                                color="gray"
+                                                style={{ paddingLeft: "1rem", fontStyle: "italic" }}
+                                            >
+                                                {song.track.artists.map((artist) => artist.name).join(", ")}
+                                            </Typography>
+                                        </Card>
+                                    ))}
+                                </Paper>
+                            </div>
+                        ) : (
+                            <div></div>
+                        )}
+                    </div>
+                )}
             </div>
+            <Modal
+                open={songSearchOpen}
+                onClose={handleSongSearchClose}
+                aria-labelledby="Search for a song"
+                aria-describedby="Search for a song by title"
+            >
+                <Box sx={modalStyle}>
+                    <Typography
+                        id="modal-modal-title"
+                        variant="h4"
+                        style={{ fontWeight: "bold", color: "whitesmoke", marginBottom: "1rem" }}
+                    >
+                        Search for a song to vote on
+                    </Typography>
+                    <div style={{ display: "flex" }}>
+                        <div style={{ flexGrow: 1, border: "1px solid gray", borderRadius: "4px" }}>
+                            <TextField
+                                id="standard-search"
+                                label="Search field"
+                                type="search"
+                                variant="standard"
+                                style={{
+                                    width: "95%",
+                                    color: "whitesmoke",
+                                    marginLeft: "0.5rem",
+                                    padding: "0",
+                                }}
+                            />
+                        </div>
+                        <Button
+                            variant="outlined"
+                            style={{
+                                borderColor: "gray",
+                                color: "whitesmoke",
+                                padding: "8px",
+                                margin: "0.5rem",
+                            }}
+                            onClick={() => handleSearch(document.getElementById("standard-search").value)}
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                    <br />
+                    <div>
+                        {songSearchResults.map((song) => (
+                            <Card
+                                variant="outlined"
+                                key={song.id}
+                                style={{ padding: "0.25rem", margin: "0.5rem", borderColor: "#404040" }}
+                                onClick={() => {
+                                    handleSubmitVote(song.uri, 1);
+                                }}
+                            >
+                                <Typography variant="body1">{song.name}</Typography>
+                                <Typography variant="body2" style={{ color: "gray", fontStyle: "italic" }}>
+                                    {song.artists.map((artist) => artist.name).join(", ")}
+                                </Typography>
+                            </Card>
+                        ))}
+                    </div>
+                </Box>
+            </Modal>
         </Box>
     );
 }

@@ -2,7 +2,6 @@ import { React, useState } from "react";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
-import Playlist from "./pages/Playlist";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import "./App.css";
@@ -40,16 +39,7 @@ export default function App() {
                         path="/sign-up"
                         element={<SignUp setUsername={handleSetUsername} setSessionToken={handleSetSessionToken} />}
                     />
-                    <Route
-                        path="/playlist"
-                        element={<Playlist playlistID={playlistID} username={username} sessionToken={sessionToken} />}
-                    />
-                    <Route
-                        path="/home"
-                        element={
-                            <Home username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />
-                        }
-                    />
+                    <Route path="/home" element={<Home username={username} sessionToken={sessionToken} />} />
                 </Routes>
             </Router>
         </div>
