@@ -133,6 +133,15 @@ function Home({ username, sessionToken }) {
             });
     };
 
+    const handleInviteUser = () => {
+        let username = prompt("Please provide a username to invite", "");
+        fetch(backendURL + "/invite-user/?name=" + username)
+            .then((response) => response.json())
+            .then((data) => {
+                forceUpdate();
+            });
+    };
+
     const setPlaylistInfo = (ob) => {
         setPlaylistInfo_(ob);
     };
