@@ -31,7 +31,10 @@ function Home({ username, sessionToken }) {
     const [songSearchOpen, setSongSearchOpen] = React.useState(false);
     const [songSearchResults, setSongSearchResults] = React.useState([]);
     const [pendingSongs, setPendingSongs] = React.useState([]);
-    const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
+    function forceUpdate() {
+        selectPlaylist(selectedPlaylist);
+    }
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -101,7 +104,10 @@ function Home({ username, sessionToken }) {
             });
     }
 
-    const handleSongSearchOpen = () => setSongSearchOpen(true);
+    const handleSongSearchOpen = () => {
+        setSongSearchResults([]);
+        setSongSearchOpen(true);
+    };
     const handleSongSearchClose = () => setSongSearchOpen(false);
     const modalStyle = {
         position: "absolute",
@@ -158,20 +164,26 @@ function Home({ username, sessionToken }) {
                 } else {
                     console.log(message);
                 }
+                handleSongSearchClose();
                 forceUpdate();
             });
     };
+
+    function handleGetPlaylists() {
+        fetch(backendURL + "/get-playlists/?session=" + sessionToken)
+            .then((response) => response.json())
+            .then((data) => {
+                setPlaylists(data.playlists);
+            });
+    }
 
     useEffect(() => {
         if (sessionToken === "") {
             navigate("/");
         } else {
             console.log("getting playlists");
-            fetch(backendURL + "/get-playlists/?session=" + sessionToken)
-                .then((response) => response.json())
-                .then((data) => {
-                    setPlaylists(data.playlists);
-                });
+            handleSongSearchClose();
+            handleGetPlaylists();
         }
     }, [sessionToken, navigate]);
 
@@ -325,17 +337,28 @@ function Home({ username, sessionToken }) {
                                             ))}
                                         </ul>
                                     </div>
-                                    <img
-                                        alt="Playlist cover image"
-                                        src={
-                                            playlistInfo.images == null
-                                                ? "https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2"
-                                                : playlistInfo.images[0].url
-                                        }
-                                        width="200px"
-                                        height="200px"
-                                        style={{ margin: "1rem" }}
-                                    ></img>
+                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                        <img
+                                            alt="Playlist cover image"
+                                            src={
+                                                playlistInfo.images == null
+                                                    ? "https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2"
+                                                    : playlistInfo.images[0].url
+                                            }
+                                            width="200px"
+                                            height="200px"
+                                            style={{ margin: "1rem" }}
+                                        ></img>
+                                        <Button
+                                            style={{ borderColor: "gray", width: "200px", color: "whitesmoke" }}
+                                            variant="outlined"
+                                            onClick={() => {
+                                                /* TODO */
+                                            }}
+                                        >
+                                            Invite new member
+                                        </Button>
+                                    </div>
                                 </Paper>
                                 <Paper elevation={1} style={{ margin: "1rem", padding: "1rem" }}>
                                     <div style={{ display: "flex" }}>
