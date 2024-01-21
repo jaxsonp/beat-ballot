@@ -98,6 +98,14 @@ def get_playlist_info_wrapper() -> Response:
     playlist_id = request.args.get('id')
     return get_playlist_info(playlist_id)
 
+from methods.vote import vote
+@app.route("/vote/")
+def vote_wrapper() -> Response:
+    session_token = request.args.get('session')
+    if not verify_session(session_token):
+        return make_response(jsonify({ "message": f'Invalid session' }), 400)
+
+    return vote(playlist_id, song_uri, yesno)
 
 # MAIN ======================================================================
 def main(port=5000) -> None:
@@ -113,9 +121,9 @@ def main(port=5000) -> None:
 
     spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-public"))
     print(spotify.current_user())
-    user_id = '3155xuovzdtbx6zmcnmytz3qg6yi'
+    os.environ["USER_ID"] = '3155xuovzdtbx6zmcnmytz3qg6yi'
 
-    spotify.user_playlist_create(user_id, 'test playlist', public=True, collaborative=False, description='testing')
+    spotify.user_playlist_create(USER_ID, 'test playlist', public=True, collaborative=False, description='testing')
 
     """headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -140,6 +148,7 @@ def main(port=5000) -> None:
     cursor.execute("CREATE TABLE IF NOT EXISTS Playlists (PlaylistID INTEGER PRIMARY KEY, PlaylistName TEXT);")
     cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist (UserPlaylistID INTEGER PRIMARY KEY, PlaylistID INTEGER, UserID INTEGER);")
     cursor.execute("CREATE TABLE IF NOT EXISTS Sessions (SessionID INTEGER PRIMARY KEY, UserID INTEGER, Token TEXT, LastUsedTimestamp INTEGER);")
+    cursor.execute("CREATE TABLE IF NOT EXISTS Votes (PlaylistID INTEGER, TrackURI TEXT, UserID INTEGER, YesNo INTEGER, PRIMARY KEY (PlaylistID, TrackURI, UserID))")
 
     # TEMP fake user john
     print("Inserting fake user john and his music")
