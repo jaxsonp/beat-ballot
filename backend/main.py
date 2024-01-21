@@ -1,9 +1,14 @@
 
 import os
+import json
 from flask import Flask, request, Response, make_response, jsonify
 from flask_cors import CORS
+import requests
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import sqlite3
 from methods.verify_session import verify_session
+from private_tokens import *
 
 DATABASE_PATH = "./database.db"
 SESSION_TIMEOUT_LEN = 3600 # seconds in one hour
@@ -101,6 +106,28 @@ def main(port=5000) -> None:
 
     os.environ["DB_PATH"] = DATABASE_PATH
     os.environ["SESSION_TIMEOUT_LEN"] = str(SESSION_TIMEOUT_LEN)
+
+    print("Connecting to spotify")
+    os.environ["SPOTIPY_CLIENT_ID"] = client_id
+    os.environ["SPOTIPY_CLIENT_SECRET"] = client_secret
+    os.environ["SPOTIPY_REDIRECT_URI"] = "http://localhost:9000"
+    spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-public"))
+    print(spotify.current_user())
+    """headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    }
+    body = {
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'grant_type': "client_credentials"
+    }
+    r = requests.post('https://accounts.spotify.com/api/token', data=body, headers=headers)
+    if r.status_code != 200:
+        print("Failed")
+        print(r.text)
+        return
+    r = json.loads(r.text)
+    os.environ["SPOTIFY_ACCESS_TOKEN"] = r["access_token"]"""
 
     print("Connecting to database")
     connection = sqlite3.connect(DATABASE_PATH)
