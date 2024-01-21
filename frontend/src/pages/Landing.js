@@ -8,6 +8,15 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Paper from "@mui/material/Paper";
+<<<<<<< HEAD
+=======
+import { CardActionArea, TextField } from "@mui/material";
+import Menu from "@mui/material/Menu";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
+>>>>>>> 32ecc347a4285bdb1949f79917707f8333e61b56
 import { Button } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { Link } from "react-router-dom";
@@ -22,6 +31,7 @@ export default function Landing() {
     return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Paper style={{ padding: "2rem", margin: "2rem" }}>
+<<<<<<< HEAD
                 <div style={{ display: "flex", marginBottom: "2rem" }}>
                     <img src="/icon512.png" style={{ width: "10rem", marginRight: "3rem" }} alt="large icon" />
                     <Typography
@@ -40,6 +50,21 @@ export default function Landing() {
                         gap: "1rem",
                     }}
                 >
+=======
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{ display: "flex", marginBottom: "2rem" }}>
+                        <img src="/icon512.png" style={{ width: "10rem", marginRight: "3rem" }} alt="large icon" />
+                        <Typography variant="h1" style={{ flexGrow: 1, fontFamily: "monospace", letterSpacing: ".3rem", marginTop: "3rem" }}>
+                            BeatBallot
+                        </Typography>
+                    </div>
+                    <Typography variant="body1" style={{marginBottom: "1rem", textAlign: "left", color: "white"}}>
+                        hello
+                    </Typography>
+                </div> 
+            
+                <div style={{ display: "flex", justifyContent: "flex-end", flexDirection: "column", alignItems: "flex-end", gap: "1rem" }}>
+>>>>>>> 32ecc347a4285bdb1949f79917707f8333e61b56
                     <Link to="/sign-in">
                         <Button
                             style={{
