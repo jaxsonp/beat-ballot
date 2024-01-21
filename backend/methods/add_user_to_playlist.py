@@ -19,7 +19,7 @@ def add_user_to_playlist(username: str, playlist_id: int) -> flask.Response:
         connection.close()
         return flask.Response(f"Could not find user with name \"{username}\"", status=400, mimetype='text/plain')
     else:
-        cursor.execute(f'INSERT INTO UserPlaylist VALUES ({playlist_id}, {user_id})')
+        cursor.execute(f'INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\'{playlist_id}\', \'{user_id}\')')
         connection.commit()
 
     connection.close()
