@@ -15,6 +15,7 @@ SESSION_TIMEOUT_LEN = 3600 # seconds in one hour
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+spotify = None
 
 # ==== CORS STUFF =====================
 def build_cors_preflight_response():
@@ -90,7 +91,7 @@ def get_playlists_wrapper() -> Response:
     if not verify_session(session_token):
         return make_response(jsonify({ "message": f"Invalid session" }), 400)
 
-    return get_playlists(session_token)
+    return get_playlists(session_token, spotify)
 
 from methods.get_playlist_info import get_playlist_info
 @app.route("/get-playlist-info/")
@@ -101,75 +102,56 @@ def get_playlist_info_wrapper() -> Response:
 
 # MAIN ======================================================================
 def main(port=5000) -> None:
+    global spotify
     print("\n\n\nInitializing")
 
     os.environ["DB_PATH"] = DATABASE_PATH
     os.environ["SESSION_TIMEOUT_LEN"] = str(SESSION_TIMEOUT_LEN)
 
-    print("Connecting to spotify")
+    print("Connecting to spotify... ", end="")
     os.environ["SPOTIPY_CLIENT_ID"] = client_id
     os.environ["SPOTIPY_CLIENT_SECRET"] = client_secret
     os.environ["SPOTIPY_REDIRECT_URI"] = "http://localhost:9000"
 
     spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-public"))
-    print(spotify.current_user())
     user_id = '3155xuovzdtbx6zmcnmytz3qg6yi'
-
-    spotify.user_playlist_create(user_id, 'test playlist', public=True, collaborative=False, description='testing')
-
-    """headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-    }
-    body = {
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'grant_type': "client_credentials"
-    }
-    r = requests.post('https://accounts.spotify.com/api/token', data=body, headers=headers)
-    if r.status_code != 200:
-        print("Failed")
-        print(r.text)
-        return
-    r = json.loads(r.text)
-    os.environ["SPOTIFY_ACCESS_TOKEN"] = r["access_token"]"""
+    print("success")
 
     print("Connecting to database")
     connection = sqlite3.connect(DATABASE_PATH)
     cursor = connection.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS Users (UserID INTEGER PRIMARY KEY, Username TEXT, Password TEXT);")
-    cursor.execute("CREATE TABLE IF NOT EXISTS Playlists (PlaylistID INTEGER PRIMARY KEY, PlaylistName TEXT);")
+    cursor.execute("CREATE TABLE IF NOT EXISTS Playlists (PlaylistID INTEGER PRIMARY KEY, PlaylistURI TEXT);")
     cursor.execute("CREATE TABLE IF NOT EXISTS UserPlaylist (UserPlaylistID INTEGER PRIMARY KEY, PlaylistID INTEGER, UserID INTEGER);")
     cursor.execute("CREATE TABLE IF NOT EXISTS Sessions (SessionID INTEGER PRIMARY KEY, UserID INTEGER, Token TEXT, LastUsedTimestamp INTEGER);")
 
     # TEMP fake user john
     print("Inserting fake user john and his music")
-    john_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"john\";").fetchone()[0]
+    john_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"john\";").fetchone()
     cursor.execute("DELETE FROM Users WHERE Username=\"john\";")
-    cursor.execute("DELETE FROM Playlists WHERE PlaylistName=\"john's playlist\";")
-    cursor.execute("DELETE FROM Playlists WHERE PlaylistName=\"john's playlist 2\";")
-    cursor.execute(f"DELETE FROM UserPlaylist WHERE UserID=\"{john_id}\";")
-
+    if john_id != None:
+        cursor.execute(f"DELETE FROM UserPlaylist WHERE UserID=\"{john_id[0]}\";")
     cursor.execute(f"INSERT INTO Users (Username, Password) VALUES (\"john\", \"password\");")
     john_id = cursor.execute(f"SELECT UserID FROM Users WHERE Username=\"john\";").fetchone()[0]
 
-    cursor.execute(f"INSERT INTO Playlists (PlaylistName) VALUES (\"john's playlist\");")
-    playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistName=\"john's playlist\";").fetchone()[0]
-    cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{john_id}\");").fetchone()
-    print(playlist_id)
-
-    cursor.execute(f"INSERT INTO Playlists (PlaylistName) VALUES (\"john's playlist 2\");")
-    playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistName=\"john's playlist 2\";").fetchone()[0]
-    cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{john_id}\");").fetchone()
-    print(playlist_id)
+    print("Syncing playlists... ", end="")
+    cursor.execute("DELETE FROM Playlists;") # deleting all entries
+    playlists = spotify.current_user_playlists()
+    for playlist in playlists["items"]:
+        cursor.execute(f"INSERT INTO Playlists (PlaylistURI) VALUES (\"{playlist["uri"]}\");")
+        playlist_id = cursor.execute(f"SELECT PlaylistID FROM Playlists WHERE PlaylistURI=\"{playlist["uri"]}\";").fetchone()[0]
+        cursor.execute(f"INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\"{playlist_id}\", \"{john_id}\");")
+        pass
+    print(f"success ({playlists["total"]} playlists found)")
 
     result = cursor.execute("SELECT * FROM Users").fetchall()
-    print("users", result)
+    print("users db:", result)
 
     result = cursor.execute("SELECT * FROM Playlists").fetchall()
-    print("playlists", result)
+    print("playlists db:", result)
 
     result = cursor.execute("SELECT * FROM UserPlaylist").fetchall()
-    print("userplaylist", result)
+    print("userplaylist db:", result)
 
 
     connection.commit()

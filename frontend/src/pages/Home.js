@@ -17,14 +17,14 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Button } from "@mui/material";
 
-
 const backendURL = "http://127.0.0.1:5000";
-const settings = ['Profile', 'Logout'];
+const settings = ["Profile", "Logout"];
 
 function Home({ username, sessionToken, setPlaylist }) {
     const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = React.useState(null);
-    const [playlists, setPlaylists] = React.useState([
+    const [playlists, setPlaylists] = React.useState(
+        /*[
         // dummy data
         {
             id: 4,
@@ -34,7 +34,8 @@ function Home({ username, sessionToken, setPlaylist }) {
             id: 5,
             name: "john's playlist 2",
         },
-    ]);
+    ]*/ null
+    );
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
