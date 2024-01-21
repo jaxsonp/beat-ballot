@@ -4,6 +4,8 @@ import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import Playlist from "./pages/Playlist";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Adding from "./pages/Adding";
+import Deleting from "./pages/Deleting";
 
 export default function App() {
     const [sessionToken, setSessionToken] = useState("");
@@ -54,6 +56,14 @@ export default function App() {
                 <Route
                     path="/home"
                     element={<Home username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />}
+                />
+                <Route
+                    path="/adding"
+                    element={<Adding username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />}
+                />
+                <Route
+                    path="/deleting"
+                    element={<Deleting username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />}
                 />
             </Routes>
         </Router>
