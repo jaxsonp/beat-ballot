@@ -31,7 +31,10 @@ export default function Playlist(playlistID, sessionToken, username) {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (setting) => {
+        if (setting === "Logout") {
+            navigate("/");
+        }
         setAnchorElUser(null);
     };
 
@@ -114,7 +117,7 @@ export default function Playlist(playlistID, sessionToken, username) {
                                 onClose={handleCloseUserMenu}
                             >
                                 {settings.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                    <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                                         <Typography textAlign="center">{setting}</Typography>
                                     </MenuItem>
                                 ))}
@@ -137,15 +140,21 @@ export default function Playlist(playlistID, sessionToken, username) {
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 {playlistInfo ? (
                     <div style={{ width: "100%", maxWidth: "900px" }}>
-                        <Paper elevation={3} style={{ display: "flex", margin: "1rem", padding: "1rem" }}>
+                        <Paper elevation={1} style={{ display: "flex", margin: "1rem", padding: "1rem" }}>
                             <div style={{ flexGrow: 1 }}>
                                 <Button
                                     onClick={() => window.open("https://open.spotify.com/playlist/" + playlistInfo.id)}
                                     variant="text"
                                     style={{ padding: "0.5rem", paddingBottom: "0" }}
                                 >
-                                    <Tooltip title="Link to Spotify" arrow>
-                                        <Typography variant="h3" style={{ fontWeight: "medium" }}>
+                                    <Tooltip
+                                        title="Link to Spotify"
+                                        arrow
+                                        onClick={() =>
+                                            window.open("https://open.spotify.com/playlist/" + playlistInfo.id)
+                                        }
+                                    >
+                                        <Typography variant="h3" style={{ fontWeight: "bold", color: "#e0e0e0" }}>
                                             {playlistInfo.name}
                                         </Typography>
                                     </Tooltip>
@@ -173,14 +182,14 @@ export default function Playlist(playlistID, sessionToken, username) {
                                 style={{ margin: "1rem" }}
                             ></img>
                         </Paper>
-                        <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
+                        <Paper elevation={1} style={{ margin: "1rem", padding: "1rem" }}>
                             <div style={{ display: "flex" }}>
                                 <Typography variant="h4" style={{ fontWeight: "bold", flexGrow: 1 }}>
                                     Pending changes:
                                 </Typography>
                                 <Button
-                                    style={{ color: "white" }}
-                                    variant="contained"
+                                    style={{ borderColor: "gray", color: "whitesmoke" }}
+                                    variant="outlined"
                                     onClick={() => {
                                         /* Todo: function to delete from playlist */
                                     }}
@@ -189,12 +198,16 @@ export default function Playlist(playlistID, sessionToken, username) {
                                 </Button>
                             </div>
                         </Paper>
-                        <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
+                        <Paper elevation={1} style={{ margin: "1rem", padding: "1rem" }}>
                             <Typography variant="h4" style={{ marginBottom: "0.5rem", fontWeight: "bold" }}>
                                 Current songs in playlist:
                             </Typography>
                             {songs.map((song) => (
-                                <Card key={song.track.id} style={{ padding: "0.5rem", marginBottom: "1rem" }}>
+                                <Card
+                                    variant="outlined"
+                                    key={song.track.id}
+                                    style={{ padding: "0.5rem", marginBottom: "1rem", borderColor: "#404040" }}
+                                >
                                     <Typography variant="h6">{song.track.name}</Typography>
                                     <Typography
                                         variant="body2"

@@ -4,8 +4,8 @@ import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import Playlist from "./pages/Playlist";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Adding from "./pages/Adding";
-import Deleting from "./pages/Deleting";
+import Landing from "./pages/Landing";
+import "./App.css";
 
 export default function App() {
     const [sessionToken, setSessionToken] = useState("");
@@ -28,55 +28,30 @@ export default function App() {
     }
 
     return (
-        <Router>
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <div>
-                            <header>
-                                <h1>Beat Ballot</h1>
-                                <a href="/sign-in">sign in</a>
-                                <br />
-                                <a href="/sign-up">sign up</a>
-                            </header>
-                            <footer>
-                                <a href="https://www.flaticon.com/free-icons/poll" title="poll icons">
-                                    Poll icons created by Parzival’ 1997 - Flaticon
-                                </a>
-                            </footer>
-                        </div>
-                    }
-                />
-                <Route
-                    path="/sign-in"
-                    element={<SignIn setUsername={handleSetUsername} setSessionToken={handleSetSessionToken} />}
-                />
-                <Route
-                    path="/sign-up"
-                    element={<SignUp setUsername={handleSetUsername} setSessionToken={handleSetSessionToken} />}
-                />
-                <Route
-                    path="/playlist"
-                    element={<Playlist playlistID={playlistID} username={username} sessionToken={sessionToken} />}
-                />
-                <Route
-                    path="/home"
-                    element={<Home username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />}
-                />
-                <Route
-                    path="/adding"
-                    element={
-                        <Adding username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />
-                    }
-                />
-                <Route
-                    path="/deleting"
-                    element={
-                        <Deleting username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />
-                    }
-                />
-            </Routes>
-        </Router>
+        <div className="background">
+            <Router>
+                <Routes>
+                    <Route path="/" element={<Landing />} />
+                    <Route
+                        path="/sign-in"
+                        element={<SignIn setUsername={handleSetUsername} setSessionToken={handleSetSessionToken} />}
+                    />
+                    <Route
+                        path="/sign-up"
+                        element={<SignUp setUsername={handleSetUsername} setSessionToken={handleSetSessionToken} />}
+                    />
+                    <Route
+                        path="/playlist"
+                        element={<Playlist playlistID={playlistID} username={username} sessionToken={sessionToken} />}
+                    />
+                    <Route
+                        path="/home"
+                        element={
+                            <Home username={username} sessionToken={sessionToken} setPlaylist={handleSetPlaylistID} />
+                        }
+                    />
+                </Routes>
+            </Router>
+        </div>
     );
 }

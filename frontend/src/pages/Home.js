@@ -70,7 +70,7 @@ function Home({ username, sessionToken, setPlaylist }) {
 
     return (
         <Box>
-            <AppBar position="static">
+            <AppBar position="static" enableColorOnDark={false}>
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
                         <img src="/icon192.png" style={{ width: "2.5rem", marginRight: "1.5rem" }} alt="icon" />
@@ -122,15 +122,15 @@ function Home({ username, sessionToken, setPlaylist }) {
                 </Container>
             </AppBar>
             <div className="subheader" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <Paper elevation={3} style={{ width: "100%", maxWidth: "900px", margin: "1rem" }}>
+                <Paper elevation={1} style={{ width: "100%", maxWidth: "900px", margin: "1rem" }}>
                     <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                         <Typography variant="h4" style={{ margin: "1rem", fontWeight: "bold" }}>
                             {username}'s Playlists:
                         </Typography>
                         <Box>
                             <Button
-                                variant="contained"
-                                style={{ color: "white", margin: "1rem" }}
+                                variant="outlined"
+                                style={{ borderColor: "gray", color: "whitesmoke", margin: "1rem" }}
                                 onClick={() => {
                                     handleNewPlaylistGeneration();
                                 }}
@@ -140,7 +140,7 @@ function Home({ username, sessionToken, setPlaylist }) {
                         </Box>
                     </div>
                     {playlists.map((playlist) => (
-                        <Card key={playlist.id} style={{ margin: "1rem" }} variant="outlined">
+                        <Card key={playlist.id} style={{ margin: "1rem", borderColor: "#505050" }} variant="outlined">
                             <CardActionArea
                                 onClick={() => openPage(playlist.id)}
                                 style={{ display: "flex", alignContent: "flex-start", padding: "1rem" }}
