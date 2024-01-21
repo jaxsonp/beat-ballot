@@ -120,9 +120,10 @@ def vote_wrapper() -> Response:
 from methods.get_pending_songs import get_pending_songs
 @app.route("/get-pending-songs/")
 def get_pending_songs_wrapper() -> Response:
+    session_token = request.args.get('session')
     playlist_id = request.args.get('playlist_id')
 
-    return get_pending_songs(playlist_id, spotify)
+    return get_pending_songs(session_token, playlist_id, spotify)
 
 from methods.search_song import search_song
 @app.route("/search-song/")
