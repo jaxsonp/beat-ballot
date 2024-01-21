@@ -59,8 +59,8 @@ export default function SignUp({ setUsername, setSessionToken }) {
 
         // TODO: send to backend
         console.log({
-            username: username.value,
-            password: password.value,
+            username: username,
+            password: password,
         });
 
         // send username/password to server
