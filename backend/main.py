@@ -135,7 +135,7 @@ def search_song_wrapper() -> Response:
 from methods.add_user_to_playlist import add_user_to_playlist
 @app.route("/invite-user/")
 def invite_user_wrapper() -> Response:
-    username = requests.args.get('username')
+    username = request.args.get('name')
     playlist_id = request.args.get('playlist_id')
 
     return add_user_to_playlist(username, playlist_id)

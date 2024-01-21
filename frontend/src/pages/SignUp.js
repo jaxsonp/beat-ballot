@@ -133,7 +133,7 @@ export default function SignUp({ setUsername, setSessionToken }) {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
-                        Sign In
+                        Sign Up
                     </Button>
                     <hr />
                     <div style={{ display: "flex", justifyContent: "center" }}>

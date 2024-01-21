@@ -135,7 +135,7 @@ function Home({ username, sessionToken }) {
 
     const handleInviteUser = () => {
         let username = prompt("Please provide a username to invite", "");
-        fetch(backendURL + "/invite-user/?name=" + username)
+        fetch(backendURL + "/invite-user/?name=" + username + "&playlist_id=" + selectedPlaylist)
             .then((response) => response.json())
             .then((data) => {
                 forceUpdate();

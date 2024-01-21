@@ -1,12 +1,8 @@
 import os
-import flask
+from flask import Response, jsonify, make_response
 import sqlite3
 
-def add_user_to_playlist(username: str, playlist_id: int) -> flask.Response:
-    if username == None:
-        return flask.Response("No username provided", status=400, mimetype='text/plain')
-    elif playlist_id == None:
-        return flask.Response("No playlist ID provided", status=400, mimetype='text/plain')
+def add_user_to_playlist(username: str, playlist_id: int) -> Response:
 
     print(f"Attempting to add user \"{username}\" to playlist \"{playlist_id}\"")
     connection = sqlite3.connect(os.environ["DB_PATH"])
@@ -17,10 +13,10 @@ def add_user_to_playlist(username: str, playlist_id: int) -> flask.Response:
     connection.commit()
     if user_id == None:
         connection.close()
-        return flask.Response(f"Could not find user with name \"{username}\"", status=400, mimetype='text/plain')
+        return make_response(jsonify({ "message": f"Could not find user with name \"{username}\"" }), 400)
     else:
-        cursor.execute(f'INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\'{playlist_id}\', \'{user_id}\')')
+        cursor.execute(f'INSERT INTO UserPlaylist (PlaylistID, UserID) VALUES (\'{playlist_id}\', \'{user_id[0]}\')')
         connection.commit()
 
     connection.close()
-    return flask.Response("success", status=200, mimetype="text/plain")
+    return make_response(jsonify({ "message": "success" }), 200)

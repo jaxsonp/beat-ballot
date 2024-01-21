@@ -16,7 +16,15 @@ const theme = createTheme({
 export default function Landing() {
     return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Paper style={{ padding: "2rem", margin: "2rem" }}>
+            <Paper
+                style={{
+                    padding: "2rem",
+                    margin: "2rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                }}
+            >
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <div style={{ display: "flex", marginBottom: "2rem" }}>
                         <img src="/icon512.png" style={{ width: "10rem", marginRight: "3rem" }} alt="large icon" />
@@ -27,50 +35,50 @@ export default function Landing() {
                             BeatBallot
                         </Typography>
                     </div>
-                    <Typography variant="body1" style={{ marginBottom: "1rem", textAlign: "left", color: "white" }}>
-                        hello
-                    </Typography>
                 </div>
-
-                <div
+                <Link to="/sign-in" style={{ margin: "0.5rem" }}>
+                    <Button
+                        style={{
+                            backgroundColor: "#29B77E",
+                            color: "white",
+                            fontFamily: "monospace",
+                            width: "120px",
+                            height: "40px",
+                        }}
+                        variant="contained"
+                    >
+                        Sign In
+                    </Button>
+                </Link>
+                <Link to="/sign-up" style={{ margin: "0.5rem" }}>
+                    <Button
+                        style={{
+                            backgroundColor: "#29B77E",
+                            color: "white",
+                            fontFamily: "monospace",
+                            width: "120px",
+                            height: "40px",
+                        }}
+                        variant="contained"
+                    >
+                        Sign Up
+                    </Button>
+                </Link>
+                <hr width="500" />
+                <Typography
+                    variant="body1"
                     style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        flexDirection: "column",
-                        alignItems: "flex-end",
-                        gap: "1rem",
+                        width: "600px",
+                        margin: "1rem",
+                        textAlign: "left",
+                        color: "#C0C0C0",
+                        textAlign: "justify",
                     }}
                 >
-                    <Link to="/sign-in">
-                        <Button
-                            style={{
-                                backgroundColor: "#29B77E",
-                                color: "white",
-                                fontFamily: "monospace",
-                                width: "120px",
-                                height: "40px",
-                            }}
-                            variant="contained"
-                        >
-                            Sign In
-                        </Button>
-                    </Link>
-                    <Link to="/sign-up">
-                        <Button
-                            style={{
-                                backgroundColor: "#29B77E",
-                                color: "white",
-                                fontFamily: "monospace",
-                                width: "120px",
-                                height: "40px",
-                            }}
-                            variant="contained"
-                        >
-                            Sign Up
-                        </Button>
-                    </Link>
-                </div>
-                <hr></hr>
+                    Welcome to BeatBallot, the world's first democratic music playlist creator. With BeatBallot, you can
+                    join your friends in creating collaborative playlists, voting on which songs should stay and which
+                    should go. Click the 'Sign Up' button above to join in the fun!
+                </Typography>
             </Paper>
         </div>
     );
