@@ -6,16 +6,15 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Paper from "@mui/material/Paper";
-import { CardActionArea } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { Button } from "@mui/material";
-import { grey } from "@mui/material/colors";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
 
 const settings = ["Profile", "Logout"];
 const backendURL = "http://127.0.0.1:5000";
@@ -26,6 +25,8 @@ export default function Playlist(playlistID, sessionToken, username) {
     const [playlistInfo, setPlaylistInfo_] = useState(null);
     const [users, setUsers] = useState([]);
     const [songs, setSongs] = useState([]);
+    const [songSearchOpen, setSongSearchOpen] = React.useState(false);
+    const [searchText, setSearchText] = React.useState("");
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -36,6 +37,33 @@ export default function Playlist(playlistID, sessionToken, username) {
             navigate("/");
         }
         setAnchorElUser(null);
+    };
+
+    const handleSongSearchOpen = () => setSongSearchOpen(true);
+    const handleSongSearchClose = () => setSongSearchOpen(false);
+    const modalStyle = {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 500,
+        bgcolor: "background.paper",
+        boxShadow: 24,
+        p: 4,
+    };
+
+    const handleSearch = (query) => {
+        fetch(backendURL + "/search-song/?track_name=" + query)
+            .then((response) => response.json())
+            .then((data) => {
+                var message = data.message;
+                if (message === "success") {
+                    console.log(data);
+                } else {
+                    console.log(message);
+                    navigate("/home");
+                }
+            });
     };
 
     const setPlaylistInfo = (ob) => {
@@ -202,7 +230,7 @@ export default function Playlist(playlistID, sessionToken, username) {
                                     style={{ borderColor: "gray", color: "whitesmoke" }}
                                     variant="outlined"
                                     onClick={() => {
-                                        /* Todo: function to delete from playlist */
+                                        handleSongSearchOpen();
                                     }}
                                 >
                                     Start new vote
@@ -222,7 +250,7 @@ export default function Playlist(playlistID, sessionToken, username) {
                                     <Typography variant="h6">{song.track.name}</Typography>
                                     <Typography
                                         variant="body2"
-                                        color={grey}
+                                        color="gray"
                                         style={{ paddingLeft: "1rem", fontStyle: "italic" }}
                                     >
                                         {song.track.artists.map((artist) => artist.name).join(", ")}
@@ -235,6 +263,41 @@ export default function Playlist(playlistID, sessionToken, username) {
                     <div></div>
                 )}
             </div>
+            <Modal
+                open={songSearchOpen}
+                onClose={handleSongSearchClose}
+                aria-labelledby="Search for a song"
+                aria-describedby="Search for a song by title"
+            >
+                <Box sx={modalStyle}>
+                    <Typography
+                        id="modal-modal-title"
+                        variant="h4"
+                        style={{ fontWeight: "bold", color: "whitesmoke", marginBottom: "1rem" }}
+                    >
+                        Search for a song to vote on
+                    </Typography>
+                    <div style={{ display: "flex" }}>
+                        <div style={{ flexGrow: 1, border: "1px solid gray", borderRadius: "4px" }}>
+                            <TextField
+                                className="search-box"
+                                id="standard-search"
+                                label="Search field"
+                                type="search"
+                                variant="standard"
+                                style={{ width: "95%", color: "whitesmoke", marginLeft: "0.5rem", padding: "0" }}
+                            />
+                        </div>
+                        <Button
+                            variant="outlined"
+                            style={{ borderColor: "gray", color: "whitesmoke", padding: "8px", margin: "0.5rem" }}
+                            onClick={() => handleSearch(document.getElementById("textbox_id").value)}
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                </Box>
+            </Modal>
         </Box>
     );
 }
