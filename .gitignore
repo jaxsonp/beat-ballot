@@ -6,6 +6,7 @@ venv/
 /backend/private_tokens.py
 
 *.db
+**/.cache
 
 # dependencies
 **/node_modules

@@ -3,7 +3,6 @@ import os
 import json
 from flask import Flask, request, Response, make_response, jsonify
 from flask_cors import CORS
-import requests
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 import sqlite3
@@ -111,8 +110,13 @@ def main(port=5000) -> None:
     os.environ["SPOTIPY_CLIENT_ID"] = client_id
     os.environ["SPOTIPY_CLIENT_SECRET"] = client_secret
     os.environ["SPOTIPY_REDIRECT_URI"] = "http://localhost:9000"
+
     spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-public"))
     print(spotify.current_user())
+    user_id = '3155xuovzdtbx6zmcnmytz3qg6yi'
+
+    spotify.user_playlist_create(user_id, 'test playlist', public=True, collaborative=False, description='testing')
+
     """headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
     }
